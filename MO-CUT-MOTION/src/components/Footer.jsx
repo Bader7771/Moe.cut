@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 export default function Footer({ instagram, email }) {
   const backToTop = (event) => {
     event.preventDefault();
@@ -11,6 +13,7 @@ export default function Footer({ instagram, email }) {
       <p className="footer-descriptor">VIDEO EDITING STUDIO</p>
       <nav className="footer-links" aria-label="Footer navigation">
         <a href={instagram}>INSTAGRAM <span aria-hidden="true">↗</span></a>
+        <Link to="/admin">ADMIN <span aria-hidden="true">↗</span></Link>
         <a href={email}>EMAIL <span aria-hidden="true">↗</span></a>
         <a href="#top" onClick={backToTop}>BACK TO TOP <span aria-hidden="true">↑</span></a>
       </nav>

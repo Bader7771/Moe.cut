@@ -79,6 +79,24 @@ const TargetCursor = ({
     let currentLeaveHandler = null;
     let resumeTimeout = null;
 
+    const setCursorVisibility = (x, y) => {
+      const container = document.querySelector(containerSelector);
+      const elementAtPointer = document.elementFromPoint(x, y);
+      const isInsideVisibleContainer = Boolean(
+        container &&
+          elementAtPointer &&
+          container.contains(elementAtPointer),
+      );
+
+      cursor.classList.toggle('is-visible', isInsideVisibleContainer);
+      document.documentElement.classList.toggle(
+        'projects-target-cursor-active',
+        isInsideVisibleContainer,
+      );
+
+      return isInsideVisibleContainer;
+    };
+
     const cleanupTarget = (target) => {
       if (currentLeaveHandler) target.removeEventListener('mouseleave', currentLeaveHandler);
       currentLeaveHandler = null;
@@ -124,25 +142,18 @@ const TargetCursor = ({
     tickerFnRef.current = tickerFn;
 
     const moveHandler = (event) => {
-      const container = document.querySelector(containerSelector);
-      if (container) {
-        const rect = container.getBoundingClientRect();
-        const isInside =
-          event.clientX >= rect.left && event.clientX <= rect.right &&
-          event.clientY >= rect.top && event.clientY <= rect.bottom;
-        cursor.classList.toggle('is-visible', isInside);
-      } else {
-        cursor.classList.remove('is-visible');
-      }
+      setCursorVisibility(event.clientX, event.clientY);
       moveCursor(event.clientX, event.clientY);
     };
     window.addEventListener('mousemove', moveHandler);
 
     const scrollHandler = () => {
-      if (!activeTarget || !cursorRef.current) return;
       const { x: offsetX, y: offsetY } = getOffset();
       const mouseX = gsap.getProperty(cursorRef.current, 'x') + offsetX;
       const mouseY = gsap.getProperty(cursorRef.current, 'y') + offsetY;
+      setCursorVisibility(mouseX, mouseY);
+
+      if (!activeTarget || !cursorRef.current) return;
       const elementUnderMouse = document.elementFromPoint(mouseX, mouseY);
       const isStillOverTarget = elementUnderMouse &&
         (elementUnderMouse === activeTarget || elementUnderMouse.closest(targetSelector) === activeTarget);
@@ -151,6 +162,7 @@ const TargetCursor = ({
     window.addEventListener('scroll', scrollHandler, { passive: true });
 
     const enterHandler = (event) => {
+      if (!setCursorVisibility(event.clientX, event.clientY)) return;
       const target = event.target.closest(targetSelector);
       if (!target || !cursorRef.current || !cornersRef.current || activeTarget === target) return;
       if (activeTarget) cleanupTarget(activeTarget);
@@ -263,6 +275,8 @@ const TargetCursor = ({
       window.removeEventListener('mousemove', moveHandler);
       window.removeEventListener('mouseover', enterHandler);
       window.removeEventListener('scroll', scrollHandler);
+      document.documentElement.classList.remove('projects-target-cursor-active');
+      cursor.classList.remove('is-visible');
       if (activeTarget) cleanupTarget(activeTarget);
       if (resumeTimeout) clearTimeout(resumeTimeout);
       spinTl.current?.kill();

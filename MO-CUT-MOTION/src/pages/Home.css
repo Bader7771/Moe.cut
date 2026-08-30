@@ -1,12 +1,22 @@
 .app-container,
+#root,
 html,
-body,
-#root {
+body {
   width: 100%;
   margin: 0;
   padding: 0;
-  overflow-x: hidden;
   background: #fff;
+}
+
+html,
+body {
+  overflow-x: clip;
+  overflow-y: visible;
+}
+
+#root,
+.app-container {
+  overflow: visible;
 }
 
 .stacked-panel,
@@ -25,7 +35,7 @@ body,
 .experience > .stacked-testimonials-panel,
 .experience > .footer-button-stage {
   position: sticky;
-  top: 0;
+  top: var(--stack-stick-top, 0px);
 }
 
 /* GSAP creates this wrapper when the Editorial stage is pinned. Keep its
@@ -74,11 +84,15 @@ body,
   z-index: 10;
   background: #fff;
   box-shadow: 0 -20px 48px rgba(0, 0, 0, 0.12);
+  /* Extra document travel while this panel remains sticky. The margin is not
+     part of the panel's visual box, so the Gameboy stays exactly positioned
+     and the next layer still meets it without a visible gap. */
+  margin-bottom: clamp(96px, 14svh, 160px) !important;
 }
 
 .pin-spacer {
   position: relative !important;
-  z-index: 20;
+  z-index: 20 !important;
 }
 
 .footer-button-stage {
@@ -97,6 +111,7 @@ body,
   background-image: none !important;
   border: 0;
   box-shadow: none;
+  transform: translateY(calc(var(--stack-end-progress, 0) * var(--stack-end-lift, 0px) * -1));
 }
 
 .footer-button-wrapper {

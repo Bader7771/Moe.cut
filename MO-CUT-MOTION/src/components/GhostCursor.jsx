@@ -202,7 +202,9 @@ const GhostCursor = ({
 
     let active = true;
     const prevParentPos = parent.style.position;
-    if (!prevParentPos || prevParentPos === 'static') parent.style.position = 'relative';
+    const parentComputedPos = getComputedStyle(parent).position;
+    const didSetParentPosition = parentComputedPos === 'static';
+    if (didSetParentPosition) parent.style.position = 'relative';
 
     const renderer = new THREE.WebGLRenderer({
       antialias: !isTouch,
@@ -407,7 +409,10 @@ const GhostCursor = ({
       renderer.forceContextLoss();
       rendererRef.current = null;
       renderer.domElement.remove();
-      if (!prevParentPos || prevParentPos === 'static') parent.style.position = prevParentPos;
+      if (didSetParentPosition) {
+        if (prevParentPos) parent.style.position = prevParentPos;
+        else parent.style.removeProperty('position');
+      }
     };
   }, [
     trailLength, inertia, grainIntensity, bloomStrength, bloomRadius, bloomThreshold,

@@ -17,6 +17,14 @@
   visibility: visible;
 }
 
+/* Applied only while the pointer's hit-tested surface belongs to Projects.
+   This keeps the native cursor available everywhere else, including sections
+   layered above the still-mounted Projects component. */
+html.projects-target-cursor-active,
+html.projects-target-cursor-active * {
+  cursor: none !important;
+}
+
 .target-cursor-dot {
   position: absolute;
   left: 50%;
@@ -62,9 +70,4 @@
   transform: translate(-15px, 5px);
   border-right: none;
   border-top: none;
-}
-
-/* Hide normal pointer over project cards only */
-.projects-section .cursor-target {
-  cursor: none !important;
 }

@@ -18,9 +18,10 @@ body,
   min-height: 100%;
   background: var(--background);
 }
+html,
 body {
-  overflow-x: hidden;
-  overflow-y: auto;
+  overflow-x: clip;
+  overflow-y: visible;
 }
 button,
 input,
