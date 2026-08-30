@@ -1,0 +1,210 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=Manrope:wght@500;600;700&display=swap");
+
+:root {
+  /* Families mirror the Timeline Studio source and keep each face role-specific. */
+  --font-primary: "Manrope", "Avenir Next", Arial, sans-serif;
+  --font-display: var(--font-primary);
+  --font-editorial: "Instrument Serif", Georgia, serif;
+  --font-mono: "DM Mono", "SFMono-Regular", Consolas, monospace;
+  --font-body: var(--font-primary);
+
+  /* Only weights that are actually loaded. */
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-strong: 700;
+
+  /* Fluid semantic scale. */
+  --type-display-xl-size: clamp(3.125rem, 6.5vw, 6rem);
+  --type-display-xl-line: 0.92;
+  --type-display-xl-track: -0.045em;
+  --type-display-lg-size: clamp(2.5rem, 5vw, 4.5rem);
+  --type-display-lg-line: 0.95;
+  --type-display-lg-track: -0.045em;
+  --type-display-md-size: clamp(2.25rem, 5vw, 4rem);
+  --type-display-md-line: 1.05;
+  --type-display-md-track: -0.035em;
+
+  --type-heading-xl-size: clamp(2rem, 4vw, 3.5rem);
+  --type-heading-lg-size: clamp(1.5rem, 2.6vw, 2.875rem);
+  --type-heading-md-size: clamp(1.25rem, 2vw, 2rem);
+  --type-heading-sm-size: 1rem;
+  --type-heading-line: 1.08;
+  --type-heading-track: -0.03em;
+
+  --type-body-lg-size: clamp(1rem, 1.35vw, 1.25rem);
+  --type-body-md-size: 1rem;
+  --type-body-sm-size: 0.875rem;
+  --type-body-line: 1.6;
+  --type-body-track: 0;
+
+  --type-label-lg-size: 0.75rem;
+  --type-label-md-size: 0.6875rem;
+  --type-label-sm-size: 0.5625rem;
+  --type-label-line: 1.25;
+  --type-label-track: 0.07em;
+
+  --type-caption-size: 0.75rem;
+  --type-metadata-size: 0.6875rem;
+  --type-button-size: 0.875rem;
+  --type-nav-size: clamp(0.6875rem, 1vw, 0.9375rem);
+  --measure-reading: 68ch;
+  --measure-hero: 14ch;
+
+  font-family: var(--font-primary);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-primary);
+  font-size: var(--type-body-md-size);
+  font-weight: var(--weight-medium);
+  line-height: var(--type-body-line);
+  letter-spacing: var(--type-body-track);
+}
+
+button,
+input,
+textarea,
+select {
+  font-family: inherit;
+}
+
+h1,
+h2,
+h3,
+h4,
+p {
+  text-wrap: pretty;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+  font-weight: var(--weight-strong);
+  letter-spacing: var(--type-heading-track);
+}
+
+.type-display-xl { font: var(--weight-strong) var(--type-display-xl-size)/var(--type-display-xl-line) var(--font-display); letter-spacing: var(--type-display-xl-track); }
+.type-display-lg { font: var(--weight-strong) var(--type-display-lg-size)/var(--type-display-lg-line) var(--font-display); letter-spacing: var(--type-display-lg-track); }
+.type-display-md { font: var(--weight-strong) var(--type-display-md-size)/var(--type-display-md-line) var(--font-display); letter-spacing: var(--type-display-md-track); }
+.type-heading-xl { font: var(--weight-strong) var(--type-heading-xl-size)/var(--type-heading-line) var(--font-display); letter-spacing: var(--type-heading-track); }
+.type-heading-lg { font: var(--weight-semibold) var(--type-heading-lg-size)/var(--type-heading-line) var(--font-display); letter-spacing: var(--type-heading-track); }
+.type-heading-md { font: var(--weight-semibold) var(--type-heading-md-size)/1.15 var(--font-display); letter-spacing: -0.02em; }
+.type-heading-sm { font: var(--weight-semibold) var(--type-heading-sm-size)/1.25 var(--font-primary); }
+.type-body-lg { font: var(--weight-medium) var(--type-body-lg-size)/1.5 var(--font-primary); }
+.type-body-md { font: var(--weight-medium) var(--type-body-md-size)/var(--type-body-line) var(--font-primary); }
+.type-body-sm { font: var(--weight-medium) var(--type-body-sm-size)/1.55 var(--font-primary); }
+.type-label-lg, .type-label-md, .type-label-sm, .type-caption, .type-metadata {
+  font-family: var(--font-mono);
+  font-weight: var(--weight-medium);
+  line-height: var(--type-label-line);
+  letter-spacing: var(--type-label-track);
+}
+.type-label-lg { font-size: var(--type-label-lg-size); }
+.type-label-md { font-size: var(--type-label-md-size); }
+.type-label-sm { font-size: var(--type-label-sm-size); }
+.type-caption { font-size: var(--type-caption-size); letter-spacing: 0.02em; }
+.type-metadata { font-size: var(--type-metadata-size); letter-spacing: 0.04em; font-variant-numeric: tabular-nums; }
+
+/* Semantic mappings: components inherit roles rather than inventing typography. */
+.hero-profile-card h1 {
+  max-width: var(--measure-hero);
+  font: var(--weight-strong) var(--type-display-xl-size)/var(--type-display-xl-line) var(--font-display);
+  letter-spacing: var(--type-display-xl-track);
+  text-wrap: balance;
+}
+.hero-profile-card > p {
+  max-width: min(var(--measure-reading), 42rem);
+  font: var(--weight-medium) var(--type-body-lg-size)/1.5 var(--font-primary);
+  letter-spacing: 0;
+}
+.projects-section .projects-heading h2 {
+  font: var(--weight-strong) var(--type-display-lg-size)/var(--type-display-lg-line) var(--font-display);
+  letter-spacing: var(--type-display-lg-track);
+}
+.testimonials-headline {
+  font: var(--weight-strong) var(--type-display-md-size)/var(--type-display-md-line) var(--font-display);
+  letter-spacing: var(--type-display-md-track);
+  text-wrap: balance;
+}
+.project-card-copy strong {
+  font: var(--weight-semibold) var(--type-heading-lg-size)/0.95 var(--font-display);
+  letter-spacing: -0.04em;
+}
+.tc-review {
+  font: var(--weight-medium) var(--type-body-md-size)/var(--type-body-line) var(--font-primary);
+  max-width: var(--measure-reading);
+}
+.tc-name,
+.client-name { font-family: var(--font-primary); font-weight: var(--weight-semibold); }
+
+.navbar-brand {
+  font: var(--weight-strong) var(--type-nav-size)/1 var(--font-primary);
+  letter-spacing: -0.025em;
+}
+.navbar-center strong {
+  font: var(--weight-strong) var(--type-label-md-size)/1.1 var(--font-primary);
+  letter-spacing: 0.055em;
+}
+.navbar-language,
+.navbar-work,
+.projects-heading p,
+.projects-data-notice,
+.testimonials-eyebrow,
+.project-card-copy span,
+.project-number,
+.tc-role,
+.client-count,
+.site-footer,
+.interaction-label,
+.detail {
+  font-family: var(--font-mono);
+  font-weight: var(--weight-medium);
+  font-variant-numeric: tabular-nums;
+}
+.navbar-language,
+.navbar-work,
+.projects-heading p,
+.testimonials-eyebrow,
+.project-card-copy span,
+.tc-role {
+  text-transform: uppercase;
+  letter-spacing: var(--type-label-track);
+}
+.hero-button,
+.navbar-work {
+  font-family: var(--font-primary);
+  font-size: var(--type-button-size);
+  font-weight: var(--weight-semibold);
+  line-height: 1;
+  letter-spacing: 0;
+}
+.client-count,
+.project-number,
+.projects-data-notice,
+.site-footer { font-variant-numeric: tabular-nums; }
+
+@media (max-width: 700px) {
+  :root {
+    --type-display-xl-size: clamp(2.625rem, 12vw, 3.625rem);
+    --type-display-lg-size: clamp(2.5rem, 13vw, 3.75rem);
+    --type-display-md-size: clamp(2.125rem, 10vw, 3rem);
+    --type-body-lg-size: 0.8125rem;
+    --type-button-size: 0.75rem;
+    --measure-hero: 12ch;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+  }
+}

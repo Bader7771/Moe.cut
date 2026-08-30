@@ -1,6 +1,9 @@
 .ghost-cursor {
   position: absolute;
-  inset: 0;
+  top: var(--navbar-height, 98px);
+  right: 0;
+  bottom: 0;
+  left: 0;
   z-index: 1;
   pointer-events: none !important;
   overflow: hidden;

@@ -1,9 +1,15 @@
+import { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Admin from './pages/Admin';
 
 export default function App() {
+  useEffect(() => {
+    ScrollTrigger.refresh();
+  }, []);
+
   return (
     <Router>
       <Routes>

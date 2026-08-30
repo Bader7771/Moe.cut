@@ -3,6 +3,7 @@ import profileImage from "../assets/editorial/frame-03.jpg";
 import portraitOne from "../assets/projects/project-03.webp";
 import portraitTwo from "../assets/editorial/frame-02.jpg";
 import portraitThree from "../assets/editorial/frame-01.jpg";
+import AvailabilityPill from "./AvailabilityPill";
 
 const collaborators = [
   { initials: "MRND", name: "Mrnd.clothing", count: "70.2K followers", logo: true },
@@ -70,10 +71,7 @@ export default function HeroProfile() {
     <div className="hero-foreground">
       <div className="hero-profile-card">
         <img className="profile-avatar" src={profileImage} alt="MO-CUT-MOTION creative director" />
-        <div className="availability-pill">
-          <span className="availability-dot" aria-hidden="true" />
-          August · 1 project opening
-        </div>
+        <AvailabilityPill />
         <h1>MO-CUT-MOTION</h1>
         <p>Creative direction and video editing built to be remembered.</p>
         <div className="hero-actions">

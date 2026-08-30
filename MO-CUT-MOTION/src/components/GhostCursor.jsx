@@ -355,14 +355,15 @@ const GhostCursor = ({
       }
     };
     const onPointerMove = (event) => {
-      const navbarBottom = document.querySelector('.top-navbar')?.getBoundingClientRect().bottom ?? 0;
-      if (event.clientY < navbarBottom) {
+      const navElement = document.querySelector('.navbar');
+      const navbarBottom = navElement ? navElement.getBoundingClientRect().bottom : 80;
+      if (event.clientY <= navbarBottom) {
         pointerActiveRef.current = false;
         lastMoveTimeRef.current = performance.now();
         ensureLoop();
         return;
       }
-      const rect = parent.getBoundingClientRect();
+      const rect = host.getBoundingClientRect();
       currentMouseRef.current.set(
         THREE.MathUtils.clamp((event.clientX - rect.left) / Math.max(1, rect.width), 0, 1),
         THREE.MathUtils.clamp(1 - (event.clientY - rect.top) / Math.max(1, rect.height), 0, 1)

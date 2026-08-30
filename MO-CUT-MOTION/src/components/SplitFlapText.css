@@ -1,0 +1,142 @@
+.split-flap-text {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--split-flap-gap, 5px);
+  color: var(--split-flap-text-color, #ffffff);
+  font-family: var(--font-primary);
+  font-size: var(--split-flap-font-size, 20px);
+  font-weight: var(--weight-strong);
+  line-height: 1;
+  letter-spacing: 0;
+  white-space: pre;
+  user-select: none;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Exact mechanical tile aspect-ratio: 0.85 width to 1.25 height */
+.split-flap-text__tile {
+  position: relative;
+  width: 0.9em;
+  height: 1.35em;
+  overflow: hidden;
+  border-radius: var(--split-flap-radius, 6px);
+  background: #12151c;
+  box-shadow:
+    0 1px 1px rgba(255, 255, 255, 0.12) inset,
+    0 -1px 2px rgba(0, 0, 0, 0.6) inset,
+    0 4px 12px rgba(0, 0, 0, 0.25);
+  perspective: 400px;
+  transform-style: preserve-3d;
+}
+
+/* Mechanical horizontal split line across the center */
+.split-flap-text__tile::before {
+  content: '';
+  position: absolute;
+  z-index: 10;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 1.5px;
+  transform: translateY(-50%);
+  background: #000000;
+  box-shadow:
+    0 -0.5px 0 rgba(255, 255, 255, 0.1),
+    0 1px 0 rgba(0, 0, 0, 0.8);
+  pointer-events: none;
+}
+
+/* Subtle outer frame stroke */
+.split-flap-text__tile::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 11;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+/* Half flaps styling & lighting */
+.split-flap-text__half,
+.split-flap-text__flap {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 50%;
+  overflow: hidden;
+  backface-visibility: hidden;
+}
+
+.split-flap-text__half--top,
+.split-flap-text__flap--front {
+  top: 0;
+  background: linear-gradient(180deg, #1f242e 0%, #151922 100%);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.4);
+}
+
+.split-flap-text__half--bottom,
+.split-flap-text__flap--back {
+  bottom: 0;
+  background: linear-gradient(180deg, #11141a 0%, #0d0f14 100%);
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+/* Character rendering inside split tiles */
+.split-flap-text__char {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 200%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-weight: var(--weight-strong);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+.split-flap-text__half--top .split-flap-text__char,
+.split-flap-text__flap--front .split-flap-text__char {
+  top: 0;
+}
+
+.split-flap-text__half--bottom .split-flap-text__char,
+.split-flap-text__flap--back .split-flap-text__char {
+  bottom: 0;
+}
+
+/* 3D Flip Animations */
+.split-flap-text__flap {
+  z-index: 6;
+  will-change: transform;
+  transform-style: preserve-3d;
+}
+
+.split-flap-text__flap--front {
+  transform-origin: center bottom;
+  animation: split-flap-front var(--split-flap-flip-duration, 0.12s) cubic-bezier(0.25, 1, 0.5, 1) both;
+}
+
+.split-flap-text__flap--back {
+  transform-origin: center top;
+  transform: rotateX(90deg);
+  animation: split-flap-back var(--split-flap-flip-duration, 0.12s) cubic-bezier(0.25, 1, 0.5, 1) both;
+}
+
+@keyframes split-flap-front {
+  0% { transform: rotateX(0deg); }
+  100% { transform: rotateX(-90deg); }
+}
+
+@keyframes split-flap-back {
+  0%, 45% { transform: rotateX(90deg); }
+  100% { transform: rotateX(0deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .split-flap-text__flap {
+    animation: none !important;
+  }
+}
