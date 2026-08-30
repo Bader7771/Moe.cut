@@ -2,7 +2,7 @@ import Header from "../components/Header";
 import HeroProfile from "../components/HeroProfile";
 import GhostCursor from "../components/GhostCursor";
 import ProjectsLayer from "../components/projects/ProjectsLayer";
-import TestimonialsLayer from "../components/TestimonialsLayer";
+import TestimonialGameboy from "../components/TestimonialGameboy";
 import Footer from "../components/Footer";
 import { siteContent } from "../data/siteContent";
 
@@ -29,7 +29,7 @@ export default function Home() {
         </div>
       </div>
       <ProjectsLayer />
-      <TestimonialsLayer />
+      <TestimonialGameboy />
       <Footer
         instagram={siteContent.footer.instagram}
         email={siteContent.footer.email}
