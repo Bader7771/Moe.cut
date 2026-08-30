@@ -1,0 +1,70 @@
+.target-cursor-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none !important;
+  z-index: 999999;
+  mix-blend-mode: difference;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.target-cursor-wrapper.is-visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.target-cursor-dot {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 4px;
+  height: 4px;
+  background: #ffffff;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.target-cursor-corner {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 10px;
+  height: 10px;
+  border: 2px solid #ffffff;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.corner-tl {
+  transform: translate(-15px, -15px);
+  border-right: none;
+  border-bottom: none;
+}
+
+.corner-tr {
+  transform: translate(5px, -15px);
+  border-left: none;
+  border-bottom: none;
+}
+
+.corner-br {
+  transform: translate(5px, 5px);
+  border-left: none;
+  border-top: none;
+}
+
+.corner-bl {
+  transform: translate(-15px, 5px);
+  border-right: none;
+  border-top: none;
+}
+
+/* Hide normal pointer over project cards only */
+.projects-section .cursor-target {
+  cursor: none !important;
+}

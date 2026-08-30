@@ -11,7 +11,7 @@ export default function ProjectCard({ project }) {
   };
   const content = (
     <>
-      <img src={project.image} alt={project.alt} loading="lazy" width="1200" height="675" style={{ objectPosition: project.position }} />
+      <img className="cursor-target" src={project.image} alt={project.alt} loading="lazy" width="1200" height="675" style={{ objectPosition: project.position }} />
       <span className="project-shade" aria-hidden="true" />
       <span className="project-number">({project.id})</span>
       <span className="project-card-copy">
@@ -22,7 +22,7 @@ export default function ProjectCard({ project }) {
     </>
   );
   return (
-    <article className={`project-card${touchOpen ? " is-open" : ""}`}>
+    <article className={`project-card cursor-target${touchOpen ? " is-open" : ""}`}>
       {project.url ? (
         <a href={project.url} aria-label={`View ${project.title}`} onClick={activate}>{content}</a>
       ) : (

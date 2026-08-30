@@ -101,10 +101,6 @@ export default function HeroProfile() {
         </div>
       </div>
 
-      <div id="projects" className="hero-projects-heading">
-        <h2>Projects</h2>
-        <span aria-hidden="true" />
-      </div>
     </div>
   );
 }
