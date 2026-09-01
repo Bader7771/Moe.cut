@@ -5,7 +5,7 @@ export default function Header({ email }) {
     <header className="header site-header top-navbar navbar">
       <div className="navbar-left">
         <GoldenRingCanvas />
-        <strong className="navbar-brand">MO-CUT-MOTION</strong>
+        <strong className="navbar-brand">Moe.cut</strong>
       </div>
 
       <div className="navbar-center" aria-label="MO VIDEO EDITING STUDIO">

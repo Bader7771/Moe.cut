@@ -4,6 +4,7 @@ import portraitOne from "../assets/projects/project-03.webp";
 import portraitTwo from "../assets/editorial/frame-02.jpg";
 import portraitThree from "../assets/editorial/frame-01.jpg";
 import AvailabilityPill from "./AvailabilityPill";
+import AnimatedAvailabilityButton from "./AnimatedAvailabilityButton";
 
 const collaborators = [
   { initials: "MRND", name: "Mrnd.clothing", count: "70.2K followers", logo: true },
@@ -70,17 +71,15 @@ export default function HeroProfile() {
   return (
     <div className="hero-foreground">
       <div className="hero-profile-card">
-        <img className="profile-avatar" src={profileImage} alt="MO-CUT-MOTION creative director" />
+        <img className="profile-avatar" src={profileImage} alt="Moe.cut creative director" />
         <AvailabilityPill />
-        <h1>MO-CUT-MOTION</h1>
+        <h1>Moe.cut</h1>
         <p>Creative direction and video editing built to be remembered.</p>
         <div className="hero-actions">
           <a className="hero-button hero-button-secondary" href="#projects">
             <span aria-hidden="true">↓</span> See selected work
           </a>
-          <a className="hero-button hero-button-primary" href="mailto:hello@mo-cut-motion.com">
-            <span>Request availability</span>
-          </a>
+          <AnimatedAvailabilityButton />
         </div>
       </div>
 

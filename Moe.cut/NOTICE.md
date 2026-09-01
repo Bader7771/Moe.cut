@@ -1,6 +1,6 @@
-# MO-CUT-MOTION Website Notice
+# Moe.cut Website Notice
 
-© 2026 MO-CUT-MOTION. All rights reserved.
+© 2026 Moe.cut. All rights reserved.
 
 The website source, visual design, motion design, procedural Three.js scenes, and original studio materials may not be copied, redistributed, or reused without written permission.
 

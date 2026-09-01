@@ -1,5 +1,5 @@
 export const siteContent = {
-  name: "MO-CUT-MOTION",
+  name: "Moe.cut",
   descriptor: "VIDEO EDITING STUDIO",
   contact: {
     email: "hello@mo-cut-motion.com",
