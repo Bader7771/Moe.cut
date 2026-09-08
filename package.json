@@ -1,0 +1,9 @@
+{
+  "name": "agency-saas",
+  "private": true,
+  "scripts": {
+    "start": "npm --prefix Moe.cut run build && DATA_STORE=file PORT=5001 npm --prefix Moe.cut start",
+    "dev": "node scripts/dev.mjs",
+    "build": "npm --prefix Moe.cut run build"
+  }
+}

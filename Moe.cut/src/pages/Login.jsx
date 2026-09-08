@@ -21,12 +21,12 @@ export default function Login() {
       if (response.ok) {
         const data = await response.json();
         localStorage.setItem('adminToken', data.token);
-        navigate('/admin');
+        navigate('/admin', { replace: true });
       } else {
         const errData = await response.json();
         setError(errData.message || 'Login failed');
       }
-    } catch (err) {
+    } catch {
       setError('Network error');
     }
   };
@@ -37,19 +37,23 @@ export default function Login() {
         <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', width: '320px', gap: '1.5rem', padding: '2rem' }}>
           <h1 style={{ fontSize: '1.5rem', margin: 0, textAlign: 'center', letterSpacing: '0.05em', fontWeight: 600 }}>ADMIN LOGIN</h1>
           {error && <p style={{ color: '#ff4d4d', margin: 0, fontSize: '0.875rem', textAlign: 'center' }}>{error}</p>}
-          
-          <input 
-            type="text" 
-            placeholder="USERNAME" 
-            value={username} 
+
+          <input
+            type="text"
+            placeholder="USERNAME"
+            aria-label="Username"
+            autoComplete="username"
+            value={username}
             onChange={(e) => setUsername(e.target.value)}
             style={{ padding: '1rem', background: '#111', border: '1px solid #333', color: '#fff', fontSize: '0.875rem', letterSpacing: '0.05em', fontFamily: 'inherit' }}
             required
           />
-          <input 
-            type="password" 
-            placeholder="PASSWORD" 
-            value={password} 
+          <input
+            type="password"
+            placeholder="PASSWORD"
+            aria-label="Password"
+            autoComplete="current-password"
+            value={password}
             onChange={(e) => setPassword(e.target.value)}
             style={{ padding: '1rem', background: '#111', border: '1px solid #333', color: '#fff', fontSize: '0.875rem', letterSpacing: '0.05em', fontFamily: 'inherit' }}
             required

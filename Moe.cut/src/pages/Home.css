@@ -19,9 +19,7 @@ body {
   overflow: visible;
 }
 
-.stacked-panel,
-.footer-button-stage,
-.site-footer {
+.stacked-panel {
   position: relative;
   isolation: isolate;
   box-sizing: border-box;
@@ -32,26 +30,12 @@ body {
    inner containers and existing component layouts stay untouched. */
 .experience > .hero-layer,
 .experience > .stacked-projects-panel,
-.experience > .stacked-testimonials-panel,
-.experience > .footer-button-stage {
+.experience > .stacked-testimonials-panel {
   position: sticky;
   top: var(--stack-stick-top, 0px);
 }
 
-/* GSAP creates this wrapper when the Editorial stage is pinned. Keep its
-   visual surface continuous with the sections that overtake it. */
-.pin-spacer {
-  box-sizing: border-box;
-  margin: 0 !important;
-  border: 0 !important;
-  overflow: hidden !important;
-  background-color: #fff !important;
-  background-image: none !important;
-}
-
-.testomina-gam-boy-section,
-.editorial-type-stage,
-.footer-button-stage {
+.testomina-gam-boy-section {
   box-sizing: border-box;
   margin: 0 !important;
   padding-bottom: 0 !important;
@@ -60,17 +44,8 @@ body {
   position: relative;
 }
 
-.pin-spacer *::before,
-.pin-spacer *::after {
-  background-image: none !important;
-}
-
 .testomina-gam-boy-section::before,
-.testomina-gam-boy-section::after,
-.editorial-type-stage::before,
-.editorial-type-stage::after,
-.footer-button-stage::before,
-.footer-button-stage::after {
+.testomina-gam-boy-section::after {
   background-image: none !important;
 }
 
@@ -84,107 +59,11 @@ body {
   z-index: 10;
   background: #fff;
   box-shadow: 0 -20px 48px rgba(0, 0, 0, 0.12);
-  /* Extra document travel while this panel remains sticky. The margin is not
-     part of the panel's visual box, so the Gameboy stays exactly positioned
-     and the next layer still meets it without a visible gap. */
-  margin-bottom: clamp(96px, 14svh, 160px) !important;
-}
-
-.pin-spacer {
-  position: relative !important;
-  z-index: 20 !important;
-}
-
-.footer-button-stage {
-  position: relative;
-  z-index: 25;
-  width: 100%;
-  min-height: 85vh;
-  height: auto;
-  margin: 0 !important;
-  padding: 120px 24px !important;
-  box-sizing: border-box;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #fff !important;
-  background-image: none !important;
-  border: 0;
-  box-shadow: none;
-  transform: translateY(calc(var(--stack-end-progress, 0) * var(--stack-end-lift, 0px) * -1));
-}
-
-.footer-button-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 20px;
-  width: 100%;
-  max-width: 600px;
-  margin: 0 auto;
-}
-
-.flashing-click-prompt {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  color: #111;
-  font: 700 12px/1 var(--font-mono), monospace;
-  letter-spacing: 0.15em;
-  text-align: center;
-  text-transform: uppercase;
-  animation: flash-prompt 1.5s ease-in-out infinite;
-}
-
-.bounce-arrow-down {
-  animation: bounce-vertical 1.2s ease-in-out infinite;
-}
-
-@keyframes flash-prompt {
-  0%,
-  100% {
-    opacity: 1;
-  }
-
-  50% {
-    opacity: 0.35;
-  }
-}
-
-@keyframes bounce-vertical {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-
-  50% {
-    transform: translateY(5px);
-  }
-}
-
-.site-footer {
-  z-index: 40;
-  margin: 0 !important;
-  background: #050505 !important;
-  background-image: none !important;
-  color: #fff !important;
-  display: grid !important;
-  visibility: visible !important;
-  opacity: 1 !important;
 }
 
 @media (prefers-reduced-motion: reduce) {
-
   .stacked-projects-panel,
-  .stacked-testimonials-panel,
-  .footer-button-stage {
+  .stacked-testimonials-panel {
     box-shadow: none;
-  }
-
-  .flashing-click-prompt,
-  .bounce-arrow-down {
-    animation: none;
   }
 }

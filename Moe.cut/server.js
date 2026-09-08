@@ -1,3 +1,4 @@
+import multer from 'multer';
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
@@ -8,10 +9,14 @@ import projectRoutes from './routes/projectRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import testimonialRoutes from './routes/testimonialRoutes.js';
 
-dotenv.config();
+dotenv.config({ path: fileURLToPath(new URL('./.env', import.meta.url)) });
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+const ready = process.env.DATA_STORE === 'file' ? Promise.resolve() : connectDB();
+// Attach a rejection handler immediately; requests still receive the original error.
+ready.catch(error => console.error(error.message));
 
 // Middleware
 app.use(cors());
@@ -23,13 +28,16 @@ const __dirname = path.dirname(__filename);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // API Routes
+app.use('/api', async (req, res, next) => {
+  try { await ready; next(); } catch { res.status(503).json({ message: 'Database unavailable. Check MONGO_URI or use the local npm run dev command.' }); }
+});
 app.use('/api/projects', projectRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/testimonials', testimonialRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
-  res.status(200).json({ status: 'ok' });
+  res.status(200).json({ status: 'ok', storage: process.env.DATA_STORE === 'file' ? 'file' : 'mongodb' });
 });
 
 // Serve static frontend in production / local full-stack test
@@ -43,16 +51,15 @@ app.use((req, res, next) => {
   }
 });
 
-// Avoid port binding if imported by Vercel serverless function
-if (process.env.NODE_ENV !== 'production' || process.env.RUN_LOCAL) {
-  connectDB().finally(() => {
-    app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
-    });
-  });
-} else {
-  // Always ensure DB connects in serverless environment
-  connectDB();
-}
+app.use((error, req, res, _next) => {
+  console.error(error.message);
+  res.status(error.name === 'ValidationError' || error instanceof multer.MulterError ? 400 : 500).json({ message: error.message });
+});
 
+if (!process.env.VERCEL) {
+  ready.then(() => app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`))).catch(error => {
+    console.error(error.message);
+    process.exitCode = 1;
+  });
+}
 export default app;

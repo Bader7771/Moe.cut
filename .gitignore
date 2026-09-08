@@ -12,3 +12,6 @@ dist-ssr/
 *.log
 .DS_Store
 
+
+# Persistent local content
+**/storage/

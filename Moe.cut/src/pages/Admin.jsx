@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 export default function Admin() {
   const navigate = useNavigate();
-  
+
   // Tabs: 'projects' or 'testimonials'
   const [activeTab, setActiveTab] = useState('projects');
 
@@ -28,14 +28,21 @@ export default function Admin() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
+  const [authenticated, setAuthenticated] = useState(false);
+
   // Check auth
   useEffect(() => {
     const token = localStorage.getItem('adminToken');
     if (!token) {
       navigate('/login');
     } else {
-      fetchProjects();
-      fetchTestimonials();
+      fetch('/api/auth/me', { headers: { Authorization: `Bearer ${token}` } })
+        .then(response => {
+          if (!response.ok) { localStorage.removeItem('adminToken'); navigate('/login', { replace: true }); return; }
+          setAuthenticated(true);
+          fetchProjects();
+          fetchTestimonials();
+        }).catch(() => setError('Unable to connect to the backend. Please reload.'));
     }
   }, [navigate]);
 
@@ -45,9 +52,9 @@ export default function Admin() {
       if (response.ok) {
         const data = await response.json();
         setProjects(data);
-      }
-    } catch (err) {
-      console.error('Failed to fetch projects');
+      } else { setError('Failed to load projects. Please reload.'); }
+    } catch {
+      setError('Unable to connect to the backend.');
     }
   };
 
@@ -57,9 +64,9 @@ export default function Admin() {
       if (response.ok) {
         const data = await response.json();
         setTestimonials(data);
-      }
-    } catch (err) {
-      console.error('Failed to fetch testimonials');
+      } else { setError('Failed to load testimonials. Please reload.'); }
+    } catch {
+      setError('Unable to connect to the backend.');
     }
   };
 
@@ -96,8 +103,8 @@ export default function Admin() {
     try {
       const response = await fetch(`/api/projects/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
       if (response.ok) fetchProjects();
-      else alert("Failed to delete project");
-    } catch (err) {
+      else { const data = await response.json(); setError(data.message || 'Failed to delete project'); if (response.status === 401) handleLogout(); }
+    } catch {
       alert("Network error");
     }
   };
@@ -112,7 +119,7 @@ export default function Admin() {
     formData.append('client', projectClient);
     formData.append('year', projectYear);
     formData.append('alt', projectAlt);
-    
+
     if (projectImage) formData.append('image', projectImage);
     else if (!projectEditingId) { setError('Image is required for new projects'); setLoading(false); return; }
 
@@ -126,9 +133,10 @@ export default function Admin() {
         fetchProjects();
       } else {
         const errData = await response.json();
+        if (response.status === 401) handleLogout();
         setError(errData.message || 'Failed to save project');
       }
-    } catch (err) { setError('Network error during save'); } 
+    } catch { setError('Network error during save'); }
     finally { setLoading(false); }
   };
 
@@ -154,8 +162,8 @@ export default function Admin() {
     try {
       const response = await fetch(`/api/testimonials/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
       if (response.ok) fetchTestimonials();
-      else alert("Failed to delete testimonial");
-    } catch (err) {
+      else { const data = await response.json(); setError(data.message || 'Failed to delete testimonial'); if (response.status === 401) handleLogout(); }
+    } catch {
       alert("Network error");
     }
   };
@@ -167,7 +175,7 @@ export default function Admin() {
     const formData = new FormData();
     formData.append('clientName', testName);
     formData.append('review', testReview);
-    
+
     if (testImage) formData.append('image', testImage);
     else if (!testEditingId) { setError('Client Image is required for new testimonials'); setLoading(false); return; }
 
@@ -181,16 +189,19 @@ export default function Admin() {
         fetchTestimonials();
       } else {
         const errData = await response.json();
+        if (response.status === 401) handleLogout();
         setError(errData.message || 'Failed to save testimonial');
       }
-    } catch (err) { setError('Network error during save'); } 
+    } catch { setError('Network error during save'); }
     finally { setLoading(false); }
   };
+
+  if (!authenticated) return <div style={{ padding: '3rem' }}>{error || 'Checking admin session…'}</div>;
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: '#000', color: '#fff', fontFamily: 'inherit' }}>
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflowY: 'auto', paddingBottom: '4rem' }}>
-        
+
         <header style={{ padding: '2rem 5vw', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #222' }}>
           <h1 style={{ margin: 0, fontSize: '1.25rem', letterSpacing: '0.05em' }}>ADMIN DASHBOARD</h1>
           <div style={{ display: 'flex', gap: '1rem' }}>
@@ -215,14 +226,14 @@ export default function Admin() {
                 </h2>
                 {error && <p style={{ color: '#ff4d4d', fontSize: '0.875rem' }}>{error}</p>}
                 {success && <p style={{ color: '#4ade80', fontSize: '0.875rem' }}>{success}</p>}
-                
+
                 <form onSubmit={handleProjectSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                   <input type="text" placeholder="PROJECT TITLE" value={projectTitle} onChange={e => setProjectTitle(e.target.value)} required style={inputStyle} />
                   <input type="text" placeholder="CATEGORY (E.G. FASHION FILM)" value={projectCategory} onChange={e => setProjectCategory(e.target.value)} required style={inputStyle} />
                   <input type="text" placeholder="CLIENT" value={projectClient} onChange={e => setProjectClient(e.target.value)} required style={inputStyle} />
                   <input type="text" placeholder="YEAR" value={projectYear} onChange={e => setProjectYear(e.target.value)} required style={inputStyle} />
                   <input type="text" placeholder="ALT TEXT FOR ACCESSIBILITY" value={projectAlt} onChange={e => setProjectAlt(e.target.value)} required style={inputStyle} />
-                  
+
                   <div>
                     <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.75rem', color: '#888' }}>PROJECT IMAGE {projectEditingId && '(LEAVE BLANK TO KEEP EXISTING)'}</label>
                     <input type="file" accept="image/*" onChange={e => setProjectImage(e.target.files[0])} required={!projectEditingId} style={{ color: '#fff', fontFamily: 'inherit' }} />
@@ -276,11 +287,11 @@ export default function Admin() {
                 </h2>
                 {error && <p style={{ color: '#ff4d4d', fontSize: '0.875rem' }}>{error}</p>}
                 {success && <p style={{ color: '#4ade80', fontSize: '0.875rem' }}>{success}</p>}
-                
+
                 <form onSubmit={handleTestimonialSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                   <input type="text" placeholder="CLIENT NAME" value={testName} onChange={e => setTestName(e.target.value)} required style={inputStyle} />
                   <textarea placeholder="REVIEW TEXT" value={testReview} onChange={e => setTestReview(e.target.value)} required rows={4} style={{...inputStyle, resize: 'vertical'}} />
-                  
+
                   <div>
                     <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.75rem', color: '#888' }}>CLIENT PHOTO {testEditingId && '(LEAVE BLANK TO KEEP EXISTING)'}</label>
                     <input type="file" accept="image/*" onChange={e => setTestImage(e.target.files[0])} required={!testEditingId} style={{ color: '#fff', fontFamily: 'inherit' }} />
