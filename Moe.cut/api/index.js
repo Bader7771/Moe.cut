@@ -1,2 +1,2 @@
-import app from '../server.js';
-export default app;
+// Export the Express request handler; never bind a port in a Vercel Function.
+export { default } from '../app.js';

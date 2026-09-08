@@ -120,6 +120,7 @@ export default function Admin() {
     formData.append('year', projectYear);
     formData.append('alt', projectAlt);
 
+    if (projectImage?.size > 4 * 1024 * 1024) { setError('Images must be 4 MiB or smaller.'); setLoading(false); return; }
     if (projectImage) formData.append('image', projectImage);
     else if (!projectEditingId) { setError('Image is required for new projects'); setLoading(false); return; }
 
@@ -176,6 +177,7 @@ export default function Admin() {
     formData.append('clientName', testName);
     formData.append('review', testReview);
 
+    if (testImage?.size > 4 * 1024 * 1024) { setError('Images must be 4 MiB or smaller.'); setLoading(false); return; }
     if (testImage) formData.append('image', testImage);
     else if (!testEditingId) { setError('Client Image is required for new testimonials'); setLoading(false); return; }
 
@@ -235,7 +237,7 @@ export default function Admin() {
                   <input type="text" placeholder="ALT TEXT FOR ACCESSIBILITY" value={projectAlt} onChange={e => setProjectAlt(e.target.value)} required style={inputStyle} />
 
                   <div>
-                    <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.75rem', color: '#888' }}>PROJECT IMAGE {projectEditingId && '(LEAVE BLANK TO KEEP EXISTING)'}</label>
+                    <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.75rem', color: '#888' }}>PROJECT IMAGE (MAX 4 MiB) {projectEditingId && '(LEAVE BLANK TO KEEP EXISTING)'}</label>
                     <input type="file" accept="image/*" onChange={e => setProjectImage(e.target.files[0])} required={!projectEditingId} style={{ color: '#fff', fontFamily: 'inherit' }} />
                   </div>
 
@@ -293,7 +295,7 @@ export default function Admin() {
                   <textarea placeholder="REVIEW TEXT" value={testReview} onChange={e => setTestReview(e.target.value)} required rows={4} style={{...inputStyle, resize: 'vertical'}} />
 
                   <div>
-                    <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.75rem', color: '#888' }}>CLIENT PHOTO {testEditingId && '(LEAVE BLANK TO KEEP EXISTING)'}</label>
+                    <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.75rem', color: '#888' }}>CLIENT PHOTO (MAX 4 MiB) {testEditingId && '(LEAVE BLANK TO KEEP EXISTING)'}</label>
                     <input type="file" accept="image/*" onChange={e => setTestImage(e.target.files[0])} required={!testEditingId} style={{ color: '#fff', fontFamily: 'inherit' }} />
                   </div>
 

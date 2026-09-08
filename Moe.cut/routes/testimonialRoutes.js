@@ -1,7 +1,7 @@
 import express from 'express';
 import Testimonial from '../models/Testimonial.js';
 import { store } from '../services/store.js';
-import { upload } from '../services/upload.js';
+import { upload, saveUpload } from '../services/upload.js';
 import { protect } from '../middleware/auth.js';
 const router = express.Router();
 const records = store(Testimonial, 'testimonials');
@@ -16,7 +16,7 @@ async function save(req, res, next) {
     const data = {};
     for (const key of 'clientName review image'.split(' ')) if (req.body[key] !== undefined) data[key] = req.body[key];
     
-    if (req.file) data.image = `/uploads/${req.file.filename}`;
+    if (req.file) data.image = await saveUpload(req.file);
     const record = await records.save(data, req.params.id);
     if (!record) return res.status(404).json({ message: 'Testimonial not found' });
     res.status(req.params.id ? 200 : 201).json(record);

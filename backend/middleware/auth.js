@@ -1,7 +1,10 @@
 import jwt from 'jsonwebtoken';
 import { randomBytes } from 'node:crypto';
 const temporarySecret = randomBytes(32).toString('hex');
-export const getSecret = () => process.env.JWT_SECRET || temporarySecret;
+export const getSecret = () => {
+  if (process.env.VERCEL && !process.env.JWT_SECRET) throw new Error('JWT_SECRET is required on Vercel.');
+  return process.env.JWT_SECRET || temporarySecret;
+};
 export const adminUsername = () => process.env.ADMIN_USERNAME || 'aflaton-skimo';
 export function protect(req, res, next) {
   try {

@@ -21,7 +21,7 @@ function write(name, records) {
   renameSync(`${filename}.tmp`, filename);
 }
 export function store(Model, name) {
-  const local = () => process.env.DATA_STORE === 'file';
+  const local = () => process.env.DATA_STORE === 'file' && !process.env.VERCEL;
   const query = id => mongoose.isValidObjectId(id) ? { _id: id } : name === 'projects' ? { projectId: id } : { _id: null };
   return {
     async list() { return local() ? read(name) : Model.find().sort(name === 'projects' ? { projectId: 1 } : { createdAt: -1 }); },
