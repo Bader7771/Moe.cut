@@ -1,8 +1,7 @@
-import { useLayoutEffect, useRef } from "react";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { lazy, Suspense, useLayoutEffect, useRef } from "react";
 import Header from "../components/Header";
 import HeroProfile from "../components/HeroProfile";
-import GhostCursor from "../components/GhostCursor";
+const GhostCursor = lazy(() => import("../components/GhostCursor"));
 import ProjectsLayer from "../components/projects/ProjectsLayer";
 import TestimonialGameboy from "../components/TestimonialGameboy";
 import EditorialProjects from "../components/extracted-sections/sections.js";
@@ -24,7 +23,7 @@ export default function Home() {
     if (!nodes.length) return undefined;
 
     let updateFrame = 0;
-    let refreshFrame = 0;
+
     const updateStickyTops = () => {
       updateFrame = 0;
       const viewportHeight = window.innerHeight;
@@ -34,10 +33,7 @@ export default function Home() {
         node.style.setProperty("--stack-stick-top", `${stickyTop}px`);
       });
 
-      cancelAnimationFrame(refreshFrame);
-      refreshFrame = requestAnimationFrame(() => {
-        ScrollTrigger.refresh();
-      });
+
     };
 
     const scheduleUpdate = () => {
@@ -54,7 +50,6 @@ export default function Home() {
 
     return () => {
       cancelAnimationFrame(updateFrame);
-      cancelAnimationFrame(refreshFrame);
       resizeObserver.disconnect();
       window.removeEventListener("resize", scheduleUpdate);
       window.visualViewport?.removeEventListener("resize", scheduleUpdate);
@@ -66,7 +61,7 @@ export default function Home() {
     <div id="top" className="experience app-container">
       <div ref={heroRef} className="hero-layer">
         <Header email={siteContent.contact.email} />
-        <GhostCursor
+        <Suspense fallback={null}><GhostCursor
           trailLength={35}
           grainIntensity={0.03}
           bloomStrength={0.12}
@@ -76,7 +71,7 @@ export default function Home() {
           mixBlendMode="multiply"
           edgeIntensity={0.1}
           zIndex={1}
-        />
+        /></Suspense>
         <div className="site-shell">
           <main className="hero-content">
             <HeroProfile />

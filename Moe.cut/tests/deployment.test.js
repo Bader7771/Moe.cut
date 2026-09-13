@@ -16,7 +16,7 @@ test('deployment uses one Vite build, relative APIs, and explicit SPA rewrites',
   ]);
   assert.match(read('api/index.js'), /from '..\/app.js'/);
   assert.doesNotMatch(read('app.js'), /\.listen\(/);
-  for (const filename of ['src/pages/Login.jsx', 'src/pages/Admin.jsx', 'src/components/projects/ProjectsLayer.jsx', 'src/components/TestimonialsLayer.jsx']) {
+  for (const filename of ['src/pages/Login.jsx', 'src/pages/Admin.jsx', 'src/components/projects/ProjectsLayer.jsx', 'src/components/TestimonialGameboy.jsx']) {
     assert.doesNotMatch(read(filename), /fetch\(['"`]https?:/);
   }
   assert.ok(existsSync(new URL('../dist/index.html', import.meta.url)), 'Build must produce the SPA');

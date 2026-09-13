@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
+import { observeActivity } from "../../performance/visibility";
 
 export default function TransformGizmo3D() {
   const host = useRef(null);
@@ -129,18 +130,17 @@ export default function TransformGizmo3D() {
       }
     };
     const visibility = () => syncRendering();
-    const viewportObserver = new IntersectionObserver(([entry]) => {
-      intersecting = entry.isIntersecting;
+    const stopObserving = observeActivity(node, visible => {
+      intersecting = visible;
       syncRendering();
     });
-    viewportObserver.observe(node);
     document.addEventListener("visibilitychange", visibility);
     resize();
     animationFrame = requestAnimationFrame(render);
     return () => {
       cancelAnimationFrame(animationFrame);
       observer.disconnect();
-      viewportObserver.disconnect();
+      stopObserving();
       document.removeEventListener("visibilitychange", visibility);
       node.removeEventListener("pointerenter", enter);
       node.removeEventListener("pointerleave", leave);

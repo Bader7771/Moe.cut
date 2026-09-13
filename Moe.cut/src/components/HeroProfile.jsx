@@ -1,19 +1,9 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import profileImage from "../assets/editorial/frame-03.jpg";
-import portraitOne from "../assets/projects/project-03.webp";
-import portraitTwo from "../assets/editorial/frame-02.jpg";
-import portraitThree from "../assets/editorial/frame-01.jpg";
+import { useVisibility } from "../performance/useVisibility";
+import CollaboratorImage from "./CollaboratorImage";
 import AvailabilityPill from "./AvailabilityPill";
 import AnimatedAvailabilityButton from "./AnimatedAvailabilityButton";
-
-const collaborators = [
-  { initials: "MRND", name: "Mrnd.clothing", count: "70.2K followers", logo: true },
-  { initials: "FM", name: "Facts.in.minutees", count: "1,09M subscribers", avatar: profileImage },
-  { initials: "BE", name: "Barry_empire", count: "32.9K followers", avatar: portraitTwo },
-  { initials: "SF", name: "sea.fdol", count: "135K followers", avatar: portraitOne },
-  { initials: "AC", name: "ayoubcopywriter", count: "50K followers", avatar: portraitThree },
-  { initials: "LA", name: "lassakri", count: "1.1M", avatar: profileImage },
-];
 
 function VerifiedIcon() {
   return (
@@ -24,17 +14,17 @@ function VerifiedIcon() {
   );
 }
 
-function CollaboratorSet({ hidden = false }) {
+function CollaboratorSet({ collaborators, hidden = false }) {
   return (
     <div className="collaborator-set" aria-hidden={hidden || undefined}>
       {collaborators.map((client) => (
-        <article className="collaborator-badge" key={client.name}>
-          <span className={`client-avatar${client.logo ? " client-logo" : ""}`} aria-hidden="true">
-            {client.avatar ? <img src={client.avatar} alt="" /> : `[${client.initials}]`}
+        <article className="collaborator-badge" key={client._id}>
+          <span className="client-avatar" aria-hidden="true">
+            <CollaboratorImage src={client.image} name={client.name} />
           </span>
           <span className="client-copy">
             <span className="client-name">{client.name}<VerifiedIcon /></span>
-            <span className="client-count">{client.count}</span>
+            <span className="client-count">{client.followers}</span>
           </span>
         </article>
       ))}
@@ -43,9 +33,43 @@ function CollaboratorSet({ hidden = false }) {
 }
 
 export default function HeroProfile() {
+  const hero = useRef(null);
+  const visible = useVisibility(hero);
   const scroller = useRef(null);
   const drag = useRef({ active: false, x: 0, left: 0 });
   const [dragging, setDragging] = useState(false);
+
+  const [collaborators, setCollaborators] = useState([]);
+
+  useEffect(() => {
+    if (!visible) return undefined;
+    const controller = new AbortController();
+    let pending = false;
+    const refresh = async () => {
+      if (pending || document.hidden) return;
+      pending = true;
+      try {
+        const response = await fetch('/api/collaborators', { signal: controller.signal, cache: 'no-store' });
+        if (!response.ok) return;
+        const data = await response.json();
+        if (Array.isArray(data)) setCollaborators(data.filter(c => c && typeof c._id === 'string' && typeof c.name === 'string' && c.name.trim() && typeof c.image === 'string' && c.image && typeof c.followers === 'string' && c.followers.trim()));
+      } catch { /* Keep the last loaded set during temporary network outages. */ }
+      finally { pending = false; }
+    };
+    const onStorage = event => { if (event.key === 'collaboratorsUpdatedAt') refresh(); };
+    refresh();
+    const timer = setInterval(refresh, 30000);
+    window.addEventListener('focus', refresh);
+    window.addEventListener('storage', onStorage);
+    document.addEventListener('visibilitychange', refresh);
+    return () => {
+      controller.abort();
+      clearInterval(timer);
+      window.removeEventListener('focus', refresh);
+      window.removeEventListener('storage', onStorage);
+      document.removeEventListener('visibilitychange', refresh);
+    };
+  }, [visible]);
 
   const onPointerDown = (event) => {
     const node = scroller.current;
@@ -69,7 +93,7 @@ export default function HeroProfile() {
   };
 
   return (
-    <div className="hero-foreground">
+    <div ref={hero} className="hero-foreground">
       <div className="hero-profile-card">
         <img className="profile-avatar" src={profileImage} alt="Moe.cut creative director" />
         <AvailabilityPill />
@@ -83,7 +107,7 @@ export default function HeroProfile() {
         </div>
       </div>
 
-      <div
+      {collaborators.length > 0 && <div
         ref={scroller}
         className={`collaborator-scroller${dragging ? " is-dragging" : ""}`}
         onPointerDown={onPointerDown}
@@ -93,10 +117,10 @@ export default function HeroProfile() {
         aria-label="Selected clients and collaborators"
       >
         <div className="collaborator-track">
-          <CollaboratorSet />
-          <CollaboratorSet hidden />
+          <CollaboratorSet collaborators={collaborators} />
+          <CollaboratorSet collaborators={collaborators} hidden />
         </div>
-      </div>
+      </div>}
 
     </div>
   );

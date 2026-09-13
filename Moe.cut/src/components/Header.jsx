@@ -1,10 +1,11 @@
-import GoldenRingCanvas from "./GoldenRingCanvas";
+import { lazy, Suspense } from "react";
+const GoldenRingCanvas = lazy(() => import("./GoldenRingCanvas"));
 
 export default function Header({ email }) {
   return (
     <header className="header site-header top-navbar navbar">
       <div className="navbar-left">
-        <GoldenRingCanvas />
+        <Suspense fallback={<div className="golden-ring-wrapper" />}><GoldenRingCanvas /></Suspense>
         <strong className="navbar-brand">Moe.cut</strong>
       </div>
 

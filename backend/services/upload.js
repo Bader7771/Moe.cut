@@ -33,7 +33,7 @@ export async function removeUpload(url) {
   if (!url) return;
   const mongo = /^\/api\/uploads\/([a-f0-9]{24})$/.exec(url);
   if (mongo) { await UploadedImage.deleteOne({ _id: mongo[1] }); return; }
-  const local = /^\/uploads\/([a-f0-9-]+\.(?:mp4|webm))$/.exec(url);
+  const local = /^\/uploads\/([a-f0-9-]+\.(?:mp4|webm|jpe?g|png|webp|gif))$/.exec(url);
   if (local && process.env.DATA_STORE === 'file' && !process.env.VERCEL) {
     try { await unlink(path.join(uploadDirectory, local[1])); }
     catch (error) { if (error.code !== 'ENOENT') throw error; }

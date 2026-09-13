@@ -24,7 +24,7 @@ function ConsoleButton({ className, children, ...props }) {
 const GameBoy = ({
   activeTestimonial,
   onPrev,
-  onNext, muted, playing, onToggleMute, onTogglePlayback, onPlayingChange, pressed
+  onNext, visible = true, muted, playing, onToggleMute, onTogglePlayback, onPlayingChange, pressed
 }) => {
   const videoRef = useRef(null);
 
@@ -33,10 +33,10 @@ const GameBoy = ({
     if (!video) return;
     let cancelled = false;
     video.muted = muted;
-    if (playing) video.play().catch(() => { if (!cancelled) onPlayingChange(false); });
+    if (playing && visible) video.play().catch(() => { if (!cancelled) onPlayingChange(false); });
     else video.pause();
     return () => { cancelled = true; };
-  }, [activeTestimonial?.video, muted, playing, onPlayingChange]);
+  }, [activeTestimonial?.video, muted, playing, visible, onPlayingChange]);
 
   return (
     <div className="gameboy">
@@ -50,6 +50,7 @@ const GameBoy = ({
           muted={muted}
           loop
           playsInline
+          preload="metadata"
         />
       </div>
 

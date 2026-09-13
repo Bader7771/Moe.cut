@@ -5,6 +5,7 @@ import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
 import './GhostCursor.css';
+import { observeActivity } from '../performance/visibility';
 
 const GhostCursor = ({
   className,
@@ -93,10 +94,14 @@ const GhostCursor = ({
     vec3 tint1(vec3 base){ return mix(base, vec3(0.4, 0.7, 1.0), 0.25); }
     vec3 tint2(vec3 base){ return mix(base, vec3(0.1, 0.4, 0.9), 0.35); }
 
-    vec4 blob(vec2 p, vec2 mousePos, float intensity, float activity) {
+    float smokeAt(vec2 p) {
       vec2 q = vec2(fbm(p * iScale + iTime * 0.1), fbm(p * iScale + vec2(5.2,1.3) + iTime * 0.1));
       vec2 r = vec2(fbm(p * iScale + q * 1.5 + iTime * 0.15), fbm(p * iScale + q * 1.5 + vec2(8.3,2.8) + iTime * 0.15));
       float smoke = fbm(p * iScale + r * 0.8);
+      return smoke;
+    }
+
+    vec4 blob(vec2 p, vec2 mousePos, float intensity, float activity, float smoke) {
       float radius = 0.35 + 0.2 * (1.0 / iScale);
       float distFactor = 1.0 - smoothstep(0.0, radius * activity, length(p - mousePos));
       float alpha = pow(smoke, 2.5) * distFactor;
@@ -111,7 +116,10 @@ const GhostCursor = ({
       vec2 mouse = (iMouse * 2.0 - 1.0) * vec2(iResolution.x / iResolution.y, 1.0);
       vec3 colorAcc = vec3(0.0);
       float alphaAcc = 0.0;
-      vec4 b = blob(uv, mouse, 1.0, iOpacity);
+      // Noise depends only on this pixel/time, not on the trail position.
+      // Evaluate once, retaining the original per-point falloff and sum order.
+      float smoke = smokeAt(uv);
+      vec4 b = blob(uv, mouse, 1.0, iOpacity, smoke);
       colorAcc += b.rgb;
       alphaAcc += b.a;
 
@@ -120,7 +128,7 @@ const GhostCursor = ({
         float t = 1.0 - float(i) / float(MAX_TRAIL_LENGTH);
         t = pow(t, 2.0);
         if (t > 0.01) {
-          vec4 bt = blob(uv, pm, t * 0.8, iOpacity);
+          vec4 bt = blob(uv, pm, t * 0.8, iOpacity, smoke);
           colorAcc += bt.rgb;
           alphaAcc += bt.a;
         }
@@ -201,6 +209,9 @@ const GhostCursor = ({
     if (!host || !parent) return;
 
     let active = true;
+    let visible = true;
+    let pointerEvent = null;
+    let pointerFrame = 0;
     const prevParentPos = parent.style.position;
     const parentComputedPos = getComputedStyle(parent).position;
     const didSetParentPosition = parentComputedPos === 'static';
@@ -265,6 +276,7 @@ const GhostCursor = ({
     composer.addPass(filmPass);
     composer.addPass(UnpremultiplyPass);
 
+    let lastSize = "";
     const resize = () => {
       if (!active) return;
       const rect = host.getBoundingClientRect();
@@ -274,6 +286,9 @@ const GhostCursor = ({
         hasValidSizeRef.current = false;
         return;
       }
+      const sizeKey = `${cssW}:${cssH}:${window.devicePixelRatio}`;
+      if (sizeKey === lastSize) return;
+      lastSize = sizeKey;
       const currentDPR = Math.min(window.devicePixelRatio || 1, maxDevicePixelRatio);
       const need = cssW * cssH * currentDPR * currentDPR;
       const scale = need <= pixelBudget
@@ -301,7 +316,7 @@ const GhostCursor = ({
 
     const start = performance.now();
     const animate = () => {
-      if (!active) return;
+      if (!active || !visible || document.hidden) { runningRef.current = false; rafRef.current = null; return; }
       if (!hasValidSizeRef.current) {
         rafRef.current = requestAnimationFrame(animate);
         return;
@@ -351,12 +366,15 @@ const GhostCursor = ({
     };
 
     const ensureLoop = () => {
-      if (!runningRef.current) {
+      if (visible && !document.hidden && !runningRef.current) {
         runningRef.current = true;
         rafRef.current = requestAnimationFrame(animate);
       }
     };
-    const onPointerMove = (event) => {
+    const applyPointer = () => {
+      pointerFrame = 0;
+      const event = pointerEvent;
+      if (!event || !visible) return;
       const navElement = document.querySelector('.navbar');
       const navbarBottom = navElement ? navElement.getBoundingClientRect().bottom : 80;
       if (event.clientY <= navbarBottom) {
@@ -374,6 +392,20 @@ const GhostCursor = ({
       lastMoveTimeRef.current = performance.now();
       ensureLoop();
     };
+    const onPointerMove = (event) => {
+      if (!visible) return;
+      pointerEvent = { clientX: event.clientX, clientY: event.clientY };
+      if (!pointerFrame) pointerFrame = requestAnimationFrame(applyPointer);
+    };
+    const stopObserving = observeActivity(host, value => {
+      visible = value;
+      if (visible) ensureLoop();
+      else {
+        cancelAnimationFrame(rafRef.current);
+        cancelAnimationFrame(pointerFrame); pointerFrame = 0;
+        runningRef.current = false; rafRef.current = null;
+      }
+    });
     const onPointerEnter = () => {
       pointerActiveRef.current = true;
       ensureLoop();
@@ -391,6 +423,8 @@ const GhostCursor = ({
 
     return () => {
       active = false;
+      stopObserving();
+      cancelAnimationFrame(pointerFrame);
       hasValidSizeRef.current = false;
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
       runningRef.current = false;
@@ -403,6 +437,9 @@ const GhostCursor = ({
       geom.dispose();
       material.dispose();
       materialRef.current = null;
+      bloomPass.dispose();
+      filmPass.dispose();
+      UnpremultiplyPass.dispose();
       composer.dispose();
       composerRef.current = null;
       renderer.dispose();

@@ -1,10 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import CollaboratorsAdmin from '../components/CollaboratorsAdmin';
 
 export default function Admin() {
   const navigate = useNavigate();
 
-  // Tabs: 'projects' or 'testimonials'
+  // Content management tabs
   const [activeTab, setActiveTab] = useState('projects');
 
   // --- PROJECTS STATE ---
@@ -214,9 +215,10 @@ export default function Admin() {
           </div>
         </header>
 
-        <div style={{ display: 'flex', gap: '1rem', padding: '2rem 5vw 0', borderBottom: '1px solid #222' }}>
+        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', padding: '2rem 5vw 0', borderBottom: '1px solid #222' }}>
           <button onClick={() => { setActiveTab('projects'); setError(''); setSuccess(''); }} style={{ ...tabStyle, borderBottom: activeTab === 'projects' ? '2px solid #fff' : '2px solid transparent', color: activeTab === 'projects' ? '#fff' : '#888' }}>PROJECTS</button>
           <button onClick={() => { setActiveTab('testimonials'); setError(''); setSuccess(''); }} style={{ ...tabStyle, borderBottom: activeTab === 'testimonials' ? '2px solid #fff' : '2px solid transparent', color: activeTab === 'testimonials' ? '#fff' : '#888' }}>TESTIMONIALS</button>
+          <button onClick={() => { setActiveTab('collaborators'); setError(''); setSuccess(''); }} style={{ ...tabStyle, borderBottom: activeTab === 'collaborators' ? '2px solid #fff' : '2px solid transparent', color: activeTab === 'collaborators' ? '#fff' : '#888' }}>COLLABORATORS</button>
         </div>
 
         <main style={{ padding: '3rem 5vw', display: 'flex', flexDirection: 'column', gap: '4rem' }}>
@@ -331,6 +333,7 @@ export default function Admin() {
               </div>
             </div>
           )}
+          {activeTab === 'collaborators' && <CollaboratorsAdmin styles={{ inputStyle, btnPrimaryStyle, btnSecondaryStyle, actionBtnStyle }} onLogout={handleLogout} />}
         </main>
       </div>
     </div>

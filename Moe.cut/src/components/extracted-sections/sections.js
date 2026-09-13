@@ -1,7 +1,7 @@
 // Imported from the supplied Desktop/extracted-sections section.
-// The email form validates locally only; it does not send or store submissions.
 import { useEffect, useRef, useState } from "react";
 import "./sections.css";
+import { siteContent } from "../../data/siteContent";
 import frame01 from "../../assets/projects/project-01.webp";
 import frame02 from "../../assets/projects/project-02.webp";
 import frame03 from "../../assets/projects/project-03.webp";
@@ -486,19 +486,25 @@ const fragments = [
 		dark: false
 	}
 ];
-const isValidEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+const boxInstructions = ["CLICK ON THE BOX", "KEEP GOING", "BREAK IT MORE", "ALMOST THERE", "ONE MORE", "BOX UNLOCKED"];
+const contactFields = [
+	{ name: "fullName", label: "Full name", placeholder: "Your full name", autoComplete: "name" },
+	{ name: "source", label: "How did you find us?", placeholder: "Instagram, Google, Friend, Website, etc." },
+	{ name: "message", label: "Message", placeholder: "Tell us about your business or what you need...", multiline: true }
+];
 export function ScrollScaleButton() {
 	const slot = useRef(null);
 	const prompt = useRef(null);
 	const label = useRef(null);
 	const impact = useRef(null);
-	const emailInput = useRef(null);
+	const nameInput = useRef(null);
 	const completed = useRef(false);
 	const revealTimer = useRef(0);
 	const [damage, setDamage] = useState(0);
 	const [shattered, setShattered] = useState(false);
 	const [showForm, setShowForm] = useState(false);
-	const [email, setEmail] = useState("");
+	const [values, setValues] = useState({ fullName: "", source: "", message: "" });
+	const [errors, setErrors] = useState({});
 	const [formState, setFormState] = useState("idle");
 	useEffect(() => {
 		const slotNode = slot.current;
@@ -524,7 +530,8 @@ export function ScrollScaleButton() {
 			const scrollDistance = Math.max(1, sectionNode.offsetHeight - innerHeight);
 			const sectionProgress = clamp(-rect.top / scrollDistance);
 			const textIsFinished = getComputedStyle(textStage).visibility === "hidden";
-			const buttonProgress = textIsFinished ? clamp((sectionProgress - BUTTON_REVEAL_START) / (1 - BUTTON_REVEAL_START)) : 0;
+			const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+			const buttonProgress = textIsFinished ? (reducedMotion ? 1 : clamp((sectionProgress - BUTTON_REVEAL_START) / (1 - BUTTON_REVEAL_START))) : 0;
 			const scale = START_SCALE + (1 - START_SCALE) * buttonProgress;
 			slotNode.style.opacity = buttonProgress;
 			slotNode.style.visibility = buttonProgress > 0 ? "visible" : "hidden";
@@ -548,7 +555,7 @@ export function ScrollScaleButton() {
 	useEffect(() => () => clearTimeout(revealTimer.current), []);
 	useEffect(() => {
 		if (!showForm) return undefined;
-		const focusFrame = requestAnimationFrame(() => emailInput.current?.focus());
+		const focusFrame = requestAnimationFrame(() => nameInput.current?.focus({ preventScroll: true }));
 		return () => cancelAnimationFrame(focusFrame);
 	}, [showForm]);
 	const handleBreak = () => {
@@ -572,30 +579,53 @@ export function ScrollScaleButton() {
 				slot.current.style.opacity = "1";
 				slot.current.style.visibility = "visible";
 			}
+			if (prompt.current) prompt.current.style.transform = "scale(1)";
+			if (label.current) {
+				label.current.style.opacity = "1";
+				label.current.style.transform = "translateY(0)";
+			}
 			setShattered(true);
 			revealTimer.current = setTimeout(() => setShowForm(true), 760);
 		}
 	};
 	const handleSubmit = (event) => {
 		event.preventDefault();
-		const normalizedEmail = email.trim();
-		if (!isValidEmail(normalizedEmail)) {
-			setFormState("error");
+		const submitted = Object.fromEntries(Object.entries(values).map(([key, value]) => [key, value.trim()]));
+		const missing = contactFields.filter((field) => !submitted[field.name]);
+		setErrors(Object.fromEntries(missing.map((field) => [field.name, `Please enter ${field.name === "source" ? "how you found us" : field.name === "fullName" ? "your full name" : "your message"}.`])));
+		if (missing.length) {
+			setFormState("idle");
+			event.currentTarget.elements.namedItem(missing[0].name)?.focus();
 			return;
 		}
-		setFormState("success");
+		const number = (siteContent.contact.whatsapp || "").replace(/[^0-9]/g, "");
+		if (!number) {
+			setFormState("unavailable");
+			return;
+		}
+		const message = `Hello, I would like to know more about your services.\n\nFull Name: ${submitted.fullName}\nHow did you find us: ${submitted.source}\n\nMessage:\n${submitted.message}`;
+		window.open(`https://wa.me/${number}?text=${encodeURIComponent(message)}`, "_blank", "noopener,noreferrer");
+		setFormState("opened");
 	};
 	const remainingHits = MAX_DAMAGE - damage;
 	return /* @__PURE__ */ _jsxs("div", {
 		ref: slot,
 		className: `extracted-scroll-button-slot${showForm ? " is-form-visible" : ""}`,
+		role: "region",
+		"aria-labelledby": "extracted-contact-title",
 		children: [/* @__PURE__ */ _jsxs("div", {
 			ref: prompt,
 			className: `extracted-box-prompt${shattered ? " extracted-is-shattering" : ""}${showForm ? " extracted-is-complete" : ""}`,
-			children: [/* @__PURE__ */ _jsx("p", {
+			children: [/* @__PURE__ */ _jsx("h2", {
+				id: "extracted-contact-title",
+				className: "extracted-contact-title",
+				children: "LET’S TALK"
+			}), /* @__PURE__ */ _jsx("p", {
 				ref: label,
 				className: "extracted-box-instruction",
-				children: "CLICK ON THE BOX"
+				"aria-live": "polite",
+				"aria-atomic": true,
+				children: _jsx("span", { children: boxInstructions[damage] }, damage)
 			}), /* @__PURE__ */ _jsxs("div", {
 				className: "extracted-scroll-button-layout",
 				children: [/* @__PURE__ */ _jsx("div", {
@@ -653,49 +683,55 @@ export function ScrollScaleButton() {
 					})
 				})]
 			})]
-		}), /* @__PURE__ */ _jsx("div", {
-			className: `extracted-contact-panel${showForm ? " extracted-is-visible" : ""}`,
-			children: formState === "success" ? /* @__PURE__ */ _jsx("p", {
-				className: "extracted-contact-success",
-				role: "status",
-				children: "THANK YOU — WE'LL BE IN TOUCH."
-			}) : /* @__PURE__ */ _jsxs("form", {
+		}), showForm && /* @__PURE__ */ _jsx("div", {
+			className: "extracted-contact-panel extracted-is-visible",
+			children: _jsxs("form", {
 				className: "extracted-contact-form",
 				noValidate: true,
 				onSubmit: handleSubmit,
 				children: [
-					/* @__PURE__ */ _jsx("label", {
-						htmlFor: "contact-email",
-						children: "LET'S STAY IN TOUCH"
+					...contactFields.map((field) => _jsxs("div", {
+						className: "extracted-contact-group",
+						children: [
+							_jsx("label", { htmlFor: `contact-${field.name}`, children: field.label }),
+							_jsx("div", {
+								className: `extracted-contact-field${errors[field.name] ? " extracted-has-error" : ""}`,
+								children: _jsx(field.multiline ? "textarea" : "input", {
+									ref: field.name === "fullName" ? nameInput : undefined,
+									id: `contact-${field.name}`,
+									name: field.name,
+									type: field.multiline ? undefined : "text",
+									rows: field.multiline ? 4 : undefined,
+									autoComplete: field.autoComplete,
+									placeholder: field.placeholder,
+									required: true,
+									value: values[field.name],
+									onChange: (event) => {
+										setValues((current) => ({ ...current, [field.name]: event.target.value }));
+										setErrors((current) => ({ ...current, [field.name]: "" }));
+										setFormState("idle");
+									},
+									"aria-invalid": Boolean(errors[field.name]),
+									"aria-describedby": errors[field.name] ? `contact-${field.name}-error` : undefined
+								})
+							}),
+							errors[field.name] && _jsx("p", {
+								id: `contact-${field.name}-error`,
+								className: "extracted-contact-message",
+								role: "alert",
+								children: errors[field.name]
+							})
+						]
+					}, field.name)),
+					_jsx("button", {
+						className: "hero-button hero-button-secondary extracted-contact-submit",
+						type: "submit",
+						children: "SEND ON WHATSAPP ↗"
 					}),
-					/* @__PURE__ */ _jsxs("div", {
-						className: `extracted-contact-field${formState === "error" ? " extracted-has-error" : ""}`,
-						children: [/* @__PURE__ */ _jsx("input", {
-							ref: emailInput,
-							id: "contact-email",
-							name: "email",
-							type: "email",
-							inputMode: "email",
-							autoComplete: "email",
-							placeholder: "your email",
-							value: email,
-							onChange: (event) => {
-								setEmail(event.target.value);
-								if (formState === "error") setFormState("idle");
-							},
-							"aria-invalid": formState === "error",
-							"aria-describedby": "contact-email-message"
-						}), /* @__PURE__ */ _jsx("button", {
-							type: "submit",
-							"aria-label": "Submit email",
-							children: "→"
-						})]
-					}),
-					/* @__PURE__ */ _jsx("p", {
-						id: "contact-email-message",
+					_jsx("p", {
 						className: "extracted-contact-message",
-						"aria-live": "polite",
-						children: formState === "error" ? "PLEASE ENTER A VALID EMAIL" : "\xA0"
+						role: "status",
+						children: formState === "unavailable" ? "WhatsApp is not connected yet. Please try again later." : formState === "opened" ? "Continue in WhatsApp to send your message." : "Your message opens in WhatsApp for you to send."
 					})
 				]
 			})

@@ -1,28 +1,31 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import "./TestimonialGameboy.css";
 import GameBoy from "./GameBoy";
+import { useVisibility } from "../performance/useVisibility";
 
 const padNumber = (number) => String(number).padStart(2, "0");
 
-function PreviewVideo({ src, visible }) {
+function PreviewVideo({ src, visible, near }) {
   const videoRef = useRef(null);
+  const [loaded, setLoaded] = useState(false);
+  useEffect(() => { if (near) setLoaded(true); }, [near]);
 
   useEffect(() => {
     const video = videoRef.current;
-    if (visible) video.play().catch(() => {});
+    if (visible && loaded) video.play().catch(() => {});
     else video.pause();
-  }, [src, visible]);
+  }, [src, visible, loaded]);
 
   return (
     <video
       ref={videoRef}
-      src={src}
+      src={loaded ? src : undefined}
       className="side-preview-video"
-      autoPlay={visible}
+      autoPlay={visible && loaded}
       muted
       playsInline
       loop
-      preload="metadata"
+      preload={near ? "metadata" : "none"}
       onTimeUpdate={({ currentTarget: video }) => {
         if (video.currentTime >= 10) video.currentTime = 0;
       }}
@@ -37,6 +40,8 @@ export default function TestimonialGameboy() {
   const [loadError, setLoadError] = useState(false);
 
   const sectionRef = useRef(null);
+  const near = useVisibility(sectionRef, "800px");
+  const visible = useVisibility(sectionRef);
   const transitionRef = useRef(null);
   const [movement, setMovement] = useState(0);
   const [previewCursor, setPreviewCursor] = useState(0);
@@ -58,6 +63,7 @@ export default function TestimonialGameboy() {
   const activeTestimonial = testimonials[currentIndex];
 
   useEffect(() => {
+    if (!near) return undefined;
     const controller = new AbortController();
     let pending = false;
     const refresh = async () => {
@@ -86,7 +92,7 @@ export default function TestimonialGameboy() {
       window.removeEventListener('focus', refresh);
       document.removeEventListener('visibilitychange', refresh);
     };
-  }, []);
+  }, [near]);
 
   const finishTransition = useCallback(() => {
     const transition = transitionRef.current;
@@ -151,17 +157,17 @@ export default function TestimonialGameboy() {
         {!loading && !loadError && testimonials.length > 1 && Array.from({ length: 2 * Math.max(4, Math.abs(movement) + 2) + 1 }, (_, index) => index - Math.max(4, Math.abs(movement) + 2)).map(offset => {
           const item = testimonials[((currentIndex + offset) % testimonials.length + testimonials.length) % testimonials.length];
           const position = offset - movement;
-          const visible = Math.abs(position) <= 2 && position !== 0;
+          const slotVisible = Math.abs(position) <= 2 && position !== 0;
           return (
             <button key={previewCursor + offset} type="button"
               className={`side-card-wrapper ${Math.abs(position) >= 2 ? 'outer-card' : ''}`}
-              style={{ '--position': position, '--side': Math.sign(position), opacity: visible ? undefined : 0 }}
+              style={{ '--position': position, '--side': Math.sign(position), opacity: slotVisible ? undefined : 0 }}
               onTransitionEnd={event => {
                 if (event.target === event.currentTarget && event.propertyName === 'transform') finishTransition();
               }}
-              onClick={() => move(offset)} tabIndex={visible && !movement ? 0 : -1}
-              aria-hidden={!visible} aria-label={`Watch ${item.title}`} disabled={!!movement || !visible}>
-              <PreviewVideo src={item.video} visible={visible} />
+              onClick={() => move(offset)} tabIndex={slotVisible && !movement ? 0 : -1}
+              aria-hidden={!slotVisible} aria-label={`Watch ${item.title}`} disabled={!!movement || !slotVisible}>
+              <PreviewVideo src={item.video} visible={visible && slotVisible} near={near && slotVisible} />
               <span className="side-preview-title">{item.title}</span>
             </button>
           );
@@ -171,7 +177,7 @@ export default function TestimonialGameboy() {
             : loadError ? <p role="alert">Unable to load testimonials</p>
             : !activeTestimonial ? <p>No testimonials yet.</p>
             : <GameBoy activeTestimonial={activeTestimonial} onPrev={handlePrev} onNext={handleNext}
-                muted={muted} playing={playing} onToggleMute={toggleMute} onTogglePlayback={togglePlayback}
+                muted={muted} playing={playing} visible={visible} onToggleMute={toggleMute} onTogglePlayback={togglePlayback}
                 onPlayingChange={setPlaying} pressed={pressed} />}
         </div>
       </div>

@@ -189,3 +189,14 @@ A live Vercel deployment and real MongoDB connectivity have **not** been verifie
 Pre-existing content limitations, separate from hosting: the homepage `TestimonialGameboy` uses hardcoded entries rather than the admin testimonial API; its three `/videos/testimonial*.mp4` files are absent. The API-driven `TestimonialsLayer` component is not mounted on the homepage. The imported breakable-box email form validates locally but does not send or store email. These features were not redesigned as part of the deployment adaptation.
 
 Official references: [Vercel Node.js Functions](https://vercel.com/docs/functions/runtimes/node-js), [Vite SPA routing](https://vercel.com/docs/frameworks/frontend/vite), [Vercel configuration](https://vercel.com/docs/project-configuration/vercel-json), [function payload limits](https://vercel.com/docs/functions/limitations), [Mongoose connection reuse in serverless functions](https://mongoosejs.com/docs/lambda.html).
+
+
+## Collaborator management
+
+Open **Admin → Collaborators** to add, edit, or delete a collaborator. Upload a JPG, PNG, WebP, or GIF up to 4 MiB, enter a name and a flexible followers value (for example `12.5K` or `100K+`), then save. Image previews and the existing delete confirmation are included. Editing can retain the current image.
+
+`GET /api/collaborators` and `GET /api/collaborators/:id` are public; `POST`, `PUT`, and `DELETE` use the existing admin authentication. Records use the shared Mongoose/file store with timestamps and the existing upload service. Local records live in `collaborators.json` in the configured data directory; production uses MongoDB. No new storage credentials are required.
+
+The Hero reads this API with no hardcoded fallback records. It refreshes on return to the page, after changes in another dashboard tab, and every 30 seconds while visible. Empty collections hide the collaborator strip. Temporary API failures retain the last loaded set, and failed images fall back to initials.
+
+Run `node --test tests/collaborators.test.js` from `Moe.cut` for isolated HTTP tests of local persistence and the MongoDB route path with database doubles, including upload validation and cleanup.

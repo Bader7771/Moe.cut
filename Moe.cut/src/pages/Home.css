@@ -67,3 +67,11 @@ body {
     box-shadow: none;
   }
 }
+
+/* Suspend, never remove, animation work in fully covered/offscreen panels. */
+[data-effects-paused="true"],
+[data-effects-paused="true"] *,
+[data-effects-paused="true"] *::before,
+[data-effects-paused="true"] *::after {
+  animation-play-state: paused !important;
+}

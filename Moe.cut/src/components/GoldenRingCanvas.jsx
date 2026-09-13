@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
+import { observeActivity } from "../performance/visibility";
 import ringClickSound from "../assets/Sonic Ring - Sound Effect (HD).mp3";
 
 export default function GoldenRingCanvas() {
@@ -116,7 +117,7 @@ export default function GoldenRingCanvas() {
     rim.position.set(4, 1, 3);
     scene.add(rim);
     const clickAudio = new Audio(ringClickSound);
-    clickAudio.preload = "auto";
+    clickAudio.preload = "none";
     clickAudio.volume = 0.7;
     const pointer = { x: 0, y: 0, targetX: 0, targetY: 0 };
     const idleSpeed = 0.00016;
@@ -164,7 +165,12 @@ export default function GoldenRingCanvas() {
       camera.updateProjectionMatrix();
       renderer.setSize(width, height, false);
     };
-    const move = (event) => {
+    let pointerFrame = 0;
+    let pointerEvent;
+    const applyPointer = () => {
+      pointerFrame = 0;
+      const event = pointerEvent;
+      if (!intersecting || document.hidden) return;
       if (matchMedia("(pointer: coarse)").matches) return;
       const box = host.getBoundingClientRect();
       const dx = event.clientX - (box.left + box.width / 2);
@@ -172,6 +178,11 @@ export default function GoldenRingCanvas() {
       const proximity = Math.max(0, 1 - Math.hypot(dx, dy) / 180);
       pointer.targetX = (dx / 180) * 0.12 * proximity;
       pointer.targetY = (dy / 180) * 0.08 * proximity;
+    };
+    const move = event => {
+      if (!intersecting || document.hidden) return;
+      pointerEvent = { clientX: event.clientX, clientY: event.clientY };
+      if (!pointerFrame) pointerFrame = requestAnimationFrame(applyPointer);
     };
     const chooseTarget = (destination) => {
       let category;
@@ -316,11 +327,10 @@ export default function GoldenRingCanvas() {
       }
     };
     const visibility = () => syncRendering();
-    const viewportObserver = new IntersectionObserver(([entry]) => {
-      intersecting = entry.isIntersecting;
+    const stopObserving = observeActivity(host, visible => {
+      intersecting = visible;
       syncRendering();
     });
-    viewportObserver.observe(host);
     const observer = new ResizeObserver(resize);
     observer.observe(host);
     window.addEventListener("pointermove", move, { passive: true });
@@ -333,6 +343,7 @@ export default function GoldenRingCanvas() {
     frame = requestAnimationFrame(render);
     return () => {
       running = false;
+      cancelAnimationFrame(pointerFrame);
       cancelAnimationFrame(frame);
       observer.disconnect();
       window.removeEventListener("pointermove", move);
@@ -341,7 +352,7 @@ export default function GoldenRingCanvas() {
       host.removeEventListener("click", activate);
       host.removeEventListener("keydown", keydown);
       document.removeEventListener("visibilitychange", visibility);
-      viewportObserver.disconnect();
+      stopObserving();
       clickAudio.pause();
       clickAudio.currentTime = 0;
       geometry.dispose();

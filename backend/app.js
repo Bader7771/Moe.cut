@@ -7,6 +7,7 @@ import connectDB from './config/db.js';
 import projectRoutes from './routes/projectRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import testimonialRoutes from './routes/testimonialRoutes.js';
+import collaboratorRoutes from './routes/collaboratorRoutes.js';
 import uploadRoutes from './routes/uploadRoutes.js';
 
 const app = express();
@@ -29,6 +30,7 @@ app.get('/api/health', databaseReady, (req, res) => {
 });
 app.use('/api/projects', databaseReady, projectRoutes);
 app.use('/api/testimonials', databaseReady, testimonialRoutes);
+app.use('/api/collaborators', databaseReady, collaboratorRoutes);
 app.use('/api/uploads', databaseReady, uploadRoutes);
 app.use('/api', (req, res) => res.status(404).json({ message: 'API route not found' }));
 
