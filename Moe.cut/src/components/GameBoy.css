@@ -1,0 +1,294 @@
+/* Bright orange shell with a soft gloss finish */
+.gameboy {
+  --gb-shell: #F67F18;
+  --gb-shell-light: #deddd5;
+  --gb-control: #e2e1da;
+  --gb-edge: #aaa99f;
+  --gb-ink: #090a09;
+  --mono: 'DM Mono', monospace;
+  --button-release: 150ms cubic-bezier(.2, .8, .2, 1);
+  --button-press: 50ms ease-out;
+
+  position: relative;
+  width: min(332px, calc(100vw - 28px));
+  height: 638px;
+  margin: 0 auto;
+  padding: 8px 8px 14px;
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: 436px 24px 112px 16px 18px;
+  align-content: start;
+  isolation: isolate;
+  border: 1px solid #ed7915;
+  border-radius: 40px;
+  background: linear-gradient(145deg, #ffae57 0%, #ff922d 22%, var(--gb-shell) 65%, #ff8c24 100%);
+  box-shadow: inset 0 2px 6px rgba(255, 255, 255, .5), inset 0 -2px 4px rgba(227, 105, 8, .12), 0 14px 28px rgba(91, 43, 8, .12);
+  box-sizing: border-box;
+  user-select: none;
+}
+
+.gameboy::before {
+  content: "";
+  position: absolute;
+  z-index: 3;
+  inset: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-right-color: rgba(89, 86, 76, 0.12);
+  border-bottom-color: rgba(89, 86, 76, 0.14);
+  border-radius: 35px;
+  pointer-events: none;
+}
+
+.gameboy > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Screen Enclosure — Single Unified Edge-to-Edge Viewport */
+.gameboy .screen-enclosure {
+  grid-row: 1;
+  width: 100%;
+  height: 436px;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid #9e9d94;
+  border-radius: 33px 33px 28px 28px;
+  background: #000;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.35);
+  display: block;
+}
+
+.gameboy-active-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+/* Control Deck */
+.gameboy .console-controls {
+  grid-row: 3;
+  width: 100%;
+  height: 112px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 8px;
+  box-sizing: border-box;
+}
+
+/* Original flat D-pad */
+.gameboy .dpad-control {
+  position: relative;
+  width: 112px;
+  height: 112px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(44, 43, 39, 0.15);
+  border-radius: 25px;
+}
+
+.gameboy .dpad-cross {
+  position: relative;
+  display: block;
+  width: 84px;
+  height: 84px;
+  filter:
+    drop-shadow(0 0 0.45px #b5b4ac)
+    drop-shadow(0 2px 0 #aaa9a1);
+  pointer-events: none;
+  transition: transform var(--button-release), filter var(--button-release);
+}
+
+.gameboy .dpad-cross > i {
+  position: absolute;
+  border: 0;
+  border-radius: 6px;
+  background: var(--gb-control);
+}
+
+.gameboy .dpad-cross > i:first-child {
+  top: 0;
+  left: 28px;
+  width: 28px;
+  height: 84px;
+}
+
+.gameboy .dpad-cross > i:nth-child(2) {
+  left: 0;
+  top: 28px;
+  width: 84px;
+  height: 28px;
+}
+
+.gameboy .dpad-hit {
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.gameboy .dpad-hit.left { top: 42px; left: 14px; }
+.gameboy .dpad-hit.right { top: 42px; right: 14px; }
+.gameboy .dpad-hit.up { top: 14px; left: 42px; }
+.gameboy .dpad-hit.down { bottom: 14px; left: 42px; }
+
+.gameboy .dpad-control:has(.dpad-hit:is(:active, .is-pressed, .is-held)) .dpad-cross {
+  transform: translateY(2px);
+  filter: drop-shadow(0 0 .45px #b5b4ac) drop-shadow(0 1px 0 #aaa9a1);
+  transition-duration: 50ms;
+  transition-timing-function: ease-out;
+}
+
+/* Action Controls (C & V) */
+.gameboy .action-controls {
+  position: relative;
+  width: 112px;
+  height: 112px;
+  flex: none;
+  display: block;
+  border: 1px solid rgba(44, 43, 39, 0.15);
+  border-radius: 25px;
+}
+
+.gameboy .action-controls .action-key {
+  position: absolute;
+  width: 44px;
+  height: 44px;
+  margin: 0;
+  border: 1px solid #b2b1a9;
+  border-radius: 50%;
+  background: var(--gb-control);
+  cursor: pointer;
+  box-shadow: 0 2px 0 #a5a49d;
+  transition: transform var(--button-release), box-shadow var(--button-release);
+}
+
+.gameboy .action-controls .action-key:first-child {
+  top: 17px;
+  left: 17px;
+}
+
+.gameboy .action-controls .action-key:nth-child(2) {
+  right: 17px;
+  bottom: 17px;
+}
+
+.gameboy .action-controls .action-key::after {
+  position: absolute;
+  color: rgba(70, 68, 61, 0.66);
+  font: 700 9px/1 var(--mono);
+}
+
+.gameboy .action-controls .action-key:first-child::after {
+  content: "C";
+  top: 6px;
+  right: -15px;
+}
+
+.gameboy .action-controls .action-key:nth-child(2)::after {
+  content: "V";
+  bottom: 2px;
+  left: -13px;
+}
+
+.gameboy .action-controls .action-key:is(:active, .is-pressed, .is-held) {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #a5a49d;
+  transition: transform var(--button-press), box-shadow var(--button-press);
+}
+
+.gameboy button {
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+/* Bottom Label Bar */
+.gameboy .console-bottom {
+  grid-row: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(65, 63, 57, 0.7);
+  font: 700 8px/1 var(--mono);
+  letter-spacing: 0.08em;
+}
+
+/* Responsive Mobile Scaling */
+@media (max-width: 430px) {
+  .gameboy {
+    width: min(304px, calc(100vw - 16px));
+    height: 584px;
+    grid-template-rows: 401px 24px 96px 16px 18px;
+    border-radius: 36px;
+  }
+
+  .gameboy::before {
+    inset: 4px;
+    border-radius: 32px;
+  }
+
+  .gameboy .screen-enclosure {
+    height: 401px;
+    border-radius: 30px 30px 25px 25px;
+  }
+
+  .gameboy .console-controls {
+    height: 96px;
+  }
+
+  .gameboy .dpad-control,
+  .gameboy .action-controls {
+    width: 96px;
+    height: 96px;
+  }
+
+  .gameboy .dpad-cross {
+    width: 76px;
+    height: 76px;
+  }
+
+  .gameboy .dpad-cross > i:first-child {
+    left: 25px;
+    width: 26px;
+    height: 76px;
+  }
+
+  .gameboy .dpad-cross > i:nth-child(2) {
+    top: 25px;
+    width: 76px;
+    height: 26px;
+  }
+
+  .gameboy .action-controls .action-key {
+    width: 40px;
+    height: 40px;
+  }
+
+  .gameboy .action-controls .action-key:first-child {
+    top: 14px;
+    left: 14px;
+  }
+
+  .gameboy .action-controls .action-key:nth-child(2) {
+    right: 14px;
+    bottom: 14px;
+  }
+}
+
+.gameboy button:focus-visible { outline: 2px solid #17191d; outline-offset: 3px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .gameboy .dpad-cross,
+  .gameboy .action-key { transition: none !important; }
+}

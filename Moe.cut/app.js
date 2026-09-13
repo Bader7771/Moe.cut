@@ -46,7 +46,7 @@ app.use((error, req, res, _next) => {
     : error.name === 'ValidationError' || error instanceof multer.MulterError ? 400
     : error.status || 500;
   if (status >= 500) console.error(error.name);
-  res.status(status).json({ message: error.code === 'LIMIT_FILE_SIZE' ? 'Images must be 4 MiB or smaller.'
+  res.status(status).json({ message: error.code === 'LIMIT_FILE_SIZE' ? 'Uploads must be 4 MiB or smaller.'
     : status >= 500 ? 'Unable to complete this request. Please try again.' : error.message });
 });
 export default app;

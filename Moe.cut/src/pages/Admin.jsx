@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export default function Admin() {
@@ -19,9 +19,9 @@ export default function Admin() {
 
   // --- TESTIMONIALS STATE ---
   const [testimonials, setTestimonials] = useState([]);
-  const [testName, setTestName] = useState('');
-  const [testReview, setTestReview] = useState('');
-  const [testImage, setTestImage] = useState(null);
+  const [testTitle, setTestTitle] = useState('');
+  const [testVideo, setTestVideo] = useState(null);
+  const testVideoInput = useRef(null);
   const [testEditingId, setTestEditingId] = useState(null);
 
   const [loading, setLoading] = useState(false);
@@ -144,17 +144,17 @@ export default function Admin() {
   // --- TESTIMONIALS LOGIC ---
   const handleEditTestimonial = (t) => {
     setTestEditingId(t._id);
-    setTestName(t.clientName);
-    setTestReview(t.review);
-    setTestImage(null);
+    setTestTitle(t.title);
+    setTestVideo(null);
+    if (testVideoInput.current) testVideoInput.current.value = '';
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleCancelTestimonialEdit = () => {
     setTestEditingId(null);
-    setTestName('');
-    setTestReview('');
-    setTestImage(null);
+    setTestTitle('');
+    setTestVideo(null);
+    if (testVideoInput.current) testVideoInput.current.value = '';
   };
 
   const handleDeleteTestimonial = async (id) => {
@@ -162,7 +162,10 @@ export default function Admin() {
     const token = localStorage.getItem('adminToken');
     try {
       const response = await fetch(`/api/testimonials/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
-      if (response.ok) fetchTestimonials();
+      if (response.ok) {
+        if (id === testEditingId) handleCancelTestimonialEdit();
+        await fetchTestimonials();
+      }
       else { const data = await response.json(); setError(data.message || 'Failed to delete testimonial'); if (response.status === 401) handleLogout(); }
     } catch {
       alert("Network error");
@@ -174,12 +177,11 @@ export default function Admin() {
     setLoading(true); setError(''); setSuccess('');
     const token = localStorage.getItem('adminToken');
     const formData = new FormData();
-    formData.append('clientName', testName);
-    formData.append('review', testReview);
+    formData.append('title', testTitle.trim());
 
-    if (testImage?.size > 4 * 1024 * 1024) { setError('Images must be 4 MiB or smaller.'); setLoading(false); return; }
-    if (testImage) formData.append('image', testImage);
-    else if (!testEditingId) { setError('Client Image is required for new testimonials'); setLoading(false); return; }
+    if (testVideo?.size > 4 * 1024 * 1024) { setError('Videos must be 4 MiB or smaller. Please compress your video before uploading.'); setLoading(false); return; }
+    if (testVideo) formData.append('video', testVideo);
+    else if (!testEditingId) { setError('A video is required for new testimonials'); setLoading(false); return; }
 
     try {
       const url = testEditingId ? `/api/testimonials/${testEditingId}` : '/api/testimonials';
@@ -283,7 +285,7 @@ export default function Admin() {
           {activeTab === 'testimonials' && (
             <div style={{ display: 'flex', gap: '4rem', flexWrap: 'wrap', alignItems: 'flex-start' }}>
               {/* Form Section */}
-              <div style={{ flex: '1 1 400px', padding: '2rem', background: '#111', borderRadius: '4px', border: '1px solid #222' }}>
+              <div style={{ flex: '1 1 400px', minWidth: 0, maxWidth: '100%', boxSizing: 'border-box', padding: '2rem', background: '#111', borderRadius: '4px', border: '1px solid #222' }}>
                 <h2 style={{ fontSize: '1.25rem', marginBottom: '2rem', letterSpacing: '0.05em', marginTop: 0 }}>
                   {testEditingId ? 'EDIT TESTIMONIAL' : 'ADD TESTIMONIAL'}
                 </h2>
@@ -291,13 +293,13 @@ export default function Admin() {
                 {success && <p style={{ color: '#4ade80', fontSize: '0.875rem' }}>{success}</p>}
 
                 <form onSubmit={handleTestimonialSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                  <input type="text" placeholder="CLIENT NAME" value={testName} onChange={e => setTestName(e.target.value)} required style={inputStyle} />
-                  <textarea placeholder="REVIEW TEXT" value={testReview} onChange={e => setTestReview(e.target.value)} required rows={4} style={{...inputStyle, resize: 'vertical'}} />
-
                   <div>
-                    <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.75rem', color: '#888' }}>CLIENT PHOTO (MAX 4 MiB) {testEditingId && '(LEAVE BLANK TO KEEP EXISTING)'}</label>
-                    <input type="file" accept="image/*" onChange={e => setTestImage(e.target.files[0])} required={!testEditingId} style={{ color: '#fff', fontFamily: 'inherit' }} />
+                    <label htmlFor="testimonial-video" style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.75rem', color: '#aaa' }}>VIDEO {testEditingId && '(LEAVE BLANK TO KEEP EXISTING)'}</label>
+                    <input id="testimonial-video" ref={testVideoInput} type="file" accept="video/mp4,video/webm,.mp4,.webm" onChange={e => setTestVideo(e.target.files[0] || null)} required={!testEditingId} disabled={loading} style={{ color: '#fff', fontFamily: 'inherit', width: '100%', minWidth: 0 }} />
+                    <p style={{ color: '#aaa', fontSize: '0.75rem' }}>MP4 (H.264) or WebM · maximum 4 MiB</p>
                   </div>
+                  <label htmlFor="testimonial-title">TITLE</label>
+                  <input id="testimonial-title" type="text" placeholder="Testimonial video title" value={testTitle} onChange={e => setTestTitle(e.target.value)} required maxLength={200} disabled={loading} style={inputStyle} />
 
                   <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
                     <button type="submit" disabled={loading} style={{ ...btnPrimaryStyle, flex: 1 }}>
@@ -311,21 +313,16 @@ export default function Admin() {
               </div>
 
               {/* List Section */}
-              <div style={{ flex: '2 1 500px' }}>
+              <div style={{ flex: '2 1 500px', minWidth: 0, maxWidth: '100%' }}>
                 <h2 style={{ fontSize: '1.25rem', marginBottom: '2rem', letterSpacing: '0.05em', marginTop: 0 }}>EXISTING TESTIMONIALS ({testimonials.length})</h2>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                   {testimonials.map(t => (
-                    <div key={t._id} style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', padding: '1rem', background: '#111', border: '1px solid #222', borderRadius: '4px' }}>
-                      <div style={{ width: '80px', height: '80px', flexShrink: 0, overflow: 'hidden', background: '#222', borderRadius: '50%' }}>
-                        <img src={t.image} alt={t.clientName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                      </div>
-                      <div style={{ flex: 1 }}>
-                        <h3 style={{ margin: '0 0 0.5rem 0', fontSize: '1rem' }}>{t.clientName}</h3>
-                        <p style={{ margin: 0, fontSize: '0.875rem', color: '#888', fontStyle: 'italic' }}>"{t.review}"</p>
-                      </div>
-                      <div style={{ display: 'flex', gap: '0.5rem', flexDirection: 'column' }}>
-                        <button onClick={() => handleEditTestimonial(t)} style={actionBtnStyle}>EDIT</button>
-                        <button onClick={() => handleDeleteTestimonial(t._id)} style={{...actionBtnStyle, color: '#ff4d4d', borderColor: 'rgba(255,77,77,0.3)'}}>DELETE</button>
+                    <div key={t._id} style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '1rem', padding: '1rem', background: '#111', border: '1px solid #222', borderRadius: '4px', minWidth: 0 }}>
+                      <video key={t.video} src={t.video} controls playsInline preload="metadata" aria-label={t.title} style={{ width: '100%', maxWidth: '260px', aspectRatio: '16 / 9', objectFit: 'contain', background: '#000' }} />
+                      <h3 style={{ flex: '1 1 160px', minWidth: 0, overflowWrap: 'anywhere', margin: 0, fontSize: '1rem' }}>{t.title}</h3>
+                      <div style={{ display: 'flex', gap: '0.5rem' }}>
+                        <button disabled={loading} onClick={() => handleEditTestimonial(t)} style={actionBtnStyle}>EDIT</button>
+                        <button disabled={loading} onClick={() => handleDeleteTestimonial(t._id)} style={{...actionBtnStyle, color: '#ff4d4d', borderColor: 'rgba(255,77,77,0.3)'}}>DELETE</button>
                       </div>
                     </div>
                   ))}
