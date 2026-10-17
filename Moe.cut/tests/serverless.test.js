@@ -51,6 +51,12 @@ test('serverless handler, database recovery, authentication and Mongo-backed CRU
     t.mock.method(Model, 'findOne', async query => [...records.values()].find(doc => Object.entries(query).every(([key, value]) => String(doc[key]) === String(value))));
     t.mock.method(Model, 'findOneAndDelete', async query => { const doc = await Model.findOne(query); if (doc) records.delete(String(doc._id)); return doc; });
   }
+  const Project = (await import('../models/Project.js')).default;
+  const legacyProject = new Project({ projectId: 'legacy', title: 'Legacy', category: 'Film', client: 'Test', year: '2025', image: '/legacy.webp', alt: 'Legacy project' });
+  await legacyProject.validate();
+  assert.equal(legacyProject.description, '', 'Descriptions stay optional for existing projects');
+  const oversizedDescription = new Project({ projectId: 'too-long', title: 'Too long', description: 'x'.repeat(251), category: 'Film', client: 'Test', year: '2025', image: '/too-long.webp', alt: 'Project with an oversized description' });
+  await assert.rejects(oversizedDescription.validate(), /description/, 'Descriptions are limited to 250 characters');
   const server = http.createServer(app);
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
   t.after(() => new Promise(resolve => { server.closeAllConnections(); server.close(resolve); }));
@@ -75,12 +81,13 @@ test('serverless handler, database recovery, authentication and Mongo-backed CRU
     const endpoint = `/api/${resource}`;
     for (const method of ['POST', 'PUT', 'DELETE']) assert.equal((await request(endpoint + (method === 'POST' ? '' : '/missing'), { method })).status, 401);
     const form = new FormData();
-    const fields = resource === 'projects' ? { title: 'Test', category: 'Film', client: 'Test', year: '2026', alt: 'Test image' } : { title: 'Test testimonial' };
+    const fields = resource === 'projects' ? { title: 'Test', description: 'A project-specific description.', category: 'Film', client: 'Test', year: '2026', alt: 'Test image' } : { title: 'Test testimonial' };
     Object.entries(fields).forEach(([k, v]) => form.set(k, v));
     form.set(resource === 'projects' ? 'image' : 'video', new Blob([photo], { type: resource === 'projects' ? 'image/webp' : 'video/mp4' }), resource === 'projects' ? 'test.webp' : 'test.mp4');
     const response = await request(endpoint, { method: 'POST', headers, body: form });
     assert.equal(response.status, 201, await response.clone().text());
     const record = await response.json();
+    if (resource === 'projects') assert.equal(record.description, fields.description);
     const uploadUrl = resource === 'projects' ? record.image : record.video;
     assert.match(uploadUrl, /^\/api\/uploads\/[a-f0-9]{24}$/);
     const image = await request(uploadUrl);
@@ -88,10 +95,12 @@ test('serverless handler, database recovery, authentication and Mongo-backed CRU
     assert.equal(image.headers.get('content-type'), resource === 'projects' ? 'image/webp' : 'video/mp4');
     assert.deepEqual(Buffer.from(await image.arrayBuffer()), photo);
     const key = 'title';
-    const edit = await request(`${endpoint}/${record._id}`, { method: 'PUT', ...json({ [key]: 'Updated' }), headers: { ...headers, 'Content-Type': 'application/json' } });
+    const updates = resource === 'projects' ? { [key]: 'Updated', description: 'An updated project description.' } : { [key]: 'Updated' };
+    const edit = await request(`${endpoint}/${record._id}`, { method: 'PUT', ...json(updates), headers: { ...headers, 'Content-Type': 'application/json' } });
     assert.equal(edit.status, 200);
     const edited = await edit.json();
     assert.equal(edited[key], 'Updated');
+    if (resource === 'projects') assert.equal(edited.description, updates.description);
     assert.equal(edited[resource === 'projects' ? 'image' : 'video'], record[resource === 'projects' ? 'image' : 'video']);
     assert.equal((await request(`${endpoint}/${record._id}`, { method: 'DELETE', headers })).status, 200);
     assert.deepEqual(await (await request(endpoint)).json(), []);

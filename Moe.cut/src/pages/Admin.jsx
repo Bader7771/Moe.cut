@@ -11,6 +11,7 @@ export default function Admin() {
   // --- PROJECTS STATE ---
   const [projects, setProjects] = useState([]);
   const [projectTitle, setProjectTitle] = useState('');
+  const [projectDescription, setProjectDescription] = useState('');
   const [projectCategory, setProjectCategory] = useState('');
   const [projectClient, setProjectClient] = useState('');
   const [projectYear, setProjectYear] = useState(new Date().getFullYear().toString());
@@ -80,6 +81,7 @@ export default function Admin() {
   const handleEditProject = (p) => {
     setProjectEditingId(p._id || p.projectId);
     setProjectTitle(p.title);
+    setProjectDescription((p.description || '').slice(0, 250));
     setProjectCategory(p.category);
     setProjectClient(p.client);
     setProjectYear(p.year);
@@ -91,6 +93,7 @@ export default function Admin() {
   const handleCancelProjectEdit = () => {
     setProjectEditingId(null);
     setProjectTitle('');
+    setProjectDescription('');
     setProjectCategory('');
     setProjectClient('');
     setProjectYear(new Date().getFullYear().toString());
@@ -116,6 +119,7 @@ export default function Admin() {
     const token = localStorage.getItem('adminToken');
     const formData = new FormData();
     formData.append('title', projectTitle);
+    formData.append('description', projectDescription.trim().slice(0, 250));
     formData.append('category', projectCategory);
     formData.append('client', projectClient);
     formData.append('year', projectYear);
@@ -235,6 +239,11 @@ export default function Admin() {
 
                 <form onSubmit={handleProjectSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                   <input type="text" placeholder="PROJECT TITLE" value={projectTitle} onChange={e => setProjectTitle(e.target.value)} required style={inputStyle} />
+                  <div>
+                    <label htmlFor="project-description" style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.75rem', color: '#aaa' }}>DESCRIPTION (OPTIONAL)</label>
+                    <textarea id="project-description" placeholder="PROJECT DESCRIPTION" value={projectDescription} onChange={e => setProjectDescription(e.target.value.slice(0, 250))} maxLength={250} rows={5} aria-describedby="project-description-count" style={{ ...inputStyle, resize: 'vertical', minHeight: '130px', lineHeight: 1.5 }} />
+                    <p id="project-description-count" style={{ margin: '0.4rem 0 0', color: '#888', fontSize: '0.75rem', textAlign: 'right' }}>{projectDescription.length} / 250</p>
+                  </div>
                   <input type="text" placeholder="CATEGORY (E.G. FASHION FILM)" value={projectCategory} onChange={e => setProjectCategory(e.target.value)} required style={inputStyle} />
                   <input type="text" placeholder="CLIENT" value={projectClient} onChange={e => setProjectClient(e.target.value)} required style={inputStyle} />
                   <input type="text" placeholder="YEAR" value={projectYear} onChange={e => setProjectYear(e.target.value)} required style={inputStyle} />
@@ -270,6 +279,7 @@ export default function Admin() {
                         <div style={{ flex: 1 }}>
                           <h3 style={{ margin: '0 0 0.5rem 0', fontSize: '1rem' }}>{p.title}</h3>
                           <p style={{ margin: 0, fontSize: '0.75rem', color: '#888' }}>{p.client} • {p.category} • {p.year}</p>
+                          {p.description && <p style={{ margin: '0.5rem 0 0', maxWidth: '60ch', fontSize: '0.75rem', lineHeight: 1.45, color: '#aaa' }}>{p.description}</p>}
                         </div>
                         <div style={{ display: 'flex', gap: '0.5rem', flexDirection: 'column' }}>
                           <button onClick={() => handleEditProject(p)} style={actionBtnStyle}>EDIT</button>

@@ -68,6 +68,22 @@ body {
   }
 }
 
+/* Phones and tablets read more naturally as one continuous page. The desktop
+   panel stack remains untouched above this breakpoint. */
+@media (max-width: 820px) {
+  .experience > .hero-layer,
+  .experience > .stacked-projects-panel,
+  .experience > .stacked-testimonials-panel {
+    position: relative;
+    top: auto;
+  }
+
+  .stacked-projects-panel,
+  .stacked-testimonials-panel {
+    box-shadow: none;
+  }
+}
+
 /* Suspend, never remove, animation work in fully covered/offscreen panels. */
 [data-effects-paused="true"],
 [data-effects-paused="true"] *,

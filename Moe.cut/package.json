@@ -4,7 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "node ../scripts/dev.mjs",
+    "dev:client": "vite",
     "build": "vite build && node scripts/copy-uploads.mjs",
     "start": "node server.js",
     "lint": "oxlint",
@@ -15,6 +16,7 @@
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
+    "framer-motion": "^14.3.0",
     "gsap": "^3.15.0",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.9.4",

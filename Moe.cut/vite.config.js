@@ -40,9 +40,9 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      '/uploads': { target: 'http://localhost:5001', changeOrigin: true },
+      '/uploads': { target: 'http://127.0.0.1:5001', changeOrigin: true },
       '/api': {
-        target: 'http://localhost:5001',
+        target: 'http://127.0.0.1:5001',
         changeOrigin: true,
       },
     },

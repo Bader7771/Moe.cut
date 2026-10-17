@@ -2379,6 +2379,7 @@ main {
   will-change: auto;
 }
 
+
 @media (max-width: 700px) {
   .projects-section .projects-intro {
     grid-template-columns: minmax(0, 1fr) 104px;
@@ -2400,6 +2401,7 @@ main {
     margin: 0;
     padding: 20px 20px 48px;
   }
+
 }
 
 /* Testimonials Redesign */
@@ -3028,5 +3030,279 @@ main {
   .navbar-work {
     padding-inline: 8px;
     font-size: 7px;
+  }
+}
+
+/* Mobile composition pass. These rules intentionally live after the legacy
+   breakpoints so smaller screens get one predictable layout without changing
+   the approved desktop presentation. */
+@media (max-width: 820px) {
+  .top-navbar.site-header {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 16px;
+    padding: 12px 20px;
+  }
+
+  .top-navbar.site-header::after {
+    right: 20px;
+    left: 20px;
+  }
+
+  .top-navbar .golden-ring-wrapper {
+    width: 50px;
+    height: 48px;
+    min-width: 50px;
+    flex-basis: 50px;
+  }
+
+  .navbar-left {
+    min-width: 0;
+    gap: 9px;
+  }
+
+  .navbar-brand {
+    overflow: hidden;
+    font-size: 12px;
+    letter-spacing: -0.03em;
+    text-overflow: ellipsis;
+  }
+
+  .navbar-center,
+  .navbar-language {
+    display: none;
+  }
+
+  .navbar-right {
+    justify-self: end;
+  }
+
+  .navbar-work {
+    min-height: 44px;
+    padding-inline: 14px;
+    font-size: 9px;
+  }
+
+  .projects-section .projects-intro {
+    gap: 18px;
+    padding: 30px 24px 14px;
+  }
+
+  .projects-section .projects-data-notice {
+    padding-inline: 24px;
+  }
+
+  .projects-section .project-grid {
+    gap: 18px;
+    padding: 20px 24px 56px;
+  }
+
+  .site-footer {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 20px 18px;
+  }
+
+  .site-footer > p:first-child {
+    grid-column: auto;
+  }
+
+  .footer-links {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 4px 12px;
+  }
+
+  .footer-links a {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    padding: 0;
+  }
+
+  .footer-links a:last-child {
+    justify-self: stretch;
+  }
+}
+
+@media (max-width: 700px) {
+  .hero-layer {
+    --navbar-height: 72px;
+    height: auto;
+    min-height: max(620px, 100svh);
+  }
+
+  .hero-layer .site-shell {
+    height: auto;
+    min-height: inherit;
+  }
+
+  .hero-layer .site-header {
+    top: 0;
+    right: 0;
+    left: 0;
+  }
+
+  .hero-foreground {
+    min-height: inherit;
+    padding: calc(var(--navbar-height) + 20px) 0 18px;
+  }
+
+  .hero-profile-card {
+    width: min(100% - 32px, 520px);
+  }
+
+  .hero-profile-card h1 {
+    max-width: 10ch;
+    font-size: clamp(40px, 11.5vw, 56px);
+    line-height: 0.94;
+    text-wrap: balance;
+  }
+
+  .hero-profile-card > p {
+    max-width: 34ch;
+    font-size: clamp(12px, 3.45vw, 14px);
+    line-height: 1.45;
+  }
+
+  .hero-profile-card .split-flap-text {
+    --split-flap-font-size: 14px !important;
+    --split-flap-gap: 2.5px !important;
+    max-width: 100%;
+  }
+
+  .hero-actions {
+    max-width: 390px;
+  }
+
+  .hero-button {
+    min-height: 48px;
+  }
+
+  .hero-button-primary > span {
+    min-height: 45px;
+  }
+
+  .collaborator-scroller {
+    margin-top: 20px;
+    padding-bottom: 8px;
+  }
+
+  .collaborator-track {
+    animation-duration: 36s;
+  }
+
+  .projects-section .projects-intro {
+    grid-template-columns: minmax(0, 1fr) minmax(76px, 92px);
+    gap: 12px;
+    padding: 30px 16px 14px;
+  }
+
+  .projects-section .projects-heading p {
+    margin-bottom: 8px;
+  }
+
+  .projects-section .projects-heading h2 {
+    font-size: clamp(2.45rem, 13vw, 3.65rem);
+  }
+
+  .projects-section .transform-gizmo {
+    width: 92px;
+  }
+
+  .projects-section .projects-data-notice {
+    padding: 0 16px 6px;
+  }
+
+  .projects-section .project-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    padding: 16px 16px 48px;
+  }
+
+  .projects-section .project-card > a,
+  .projects-section .project-card > button {
+    aspect-ratio: 4 / 3;
+  }
+
+  .site-footer {
+    padding-inline: 16px;
+  }
+}
+
+@media (max-width: 430px) {
+  .top-navbar.site-header {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px;
+    padding: 10px 14px;
+  }
+
+  .top-navbar.site-header::after {
+    right: 14px;
+    left: 14px;
+  }
+
+  .top-navbar .golden-ring-wrapper {
+    width: 46px;
+    min-width: 46px;
+    flex-basis: 46px;
+  }
+
+  .navbar-brand {
+    font-size: 11px;
+  }
+
+  .navbar-work {
+    min-height: 44px;
+    padding-inline: 12px;
+    font-size: 9px;
+  }
+
+  .hero-actions {
+    width: min(286px, 100%);
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .hero-button {
+    width: 100%;
+  }
+
+  .profile-avatar {
+    width: 72px;
+  }
+
+  .hero-profile-card h1 {
+    font-size: clamp(38px, 12vw, 50px);
+  }
+}
+
+@media (max-width: 360px) {
+  .top-navbar.site-header {
+    padding-inline: 12px;
+  }
+
+  .top-navbar.site-header::after {
+    right: 12px;
+    left: 12px;
+  }
+
+  .navbar-brand {
+    font-size: 10px;
+  }
+
+  .hero-profile-card {
+    width: calc(100% - 24px);
+  }
+
+  .hero-profile-card .split-flap-text {
+    --split-flap-font-size: 12.5px !important;
+    --split-flap-gap: 1.75px !important;
+  }
+
+  .projects-section .projects-intro,
+  .projects-section .project-grid {
+    padding-right: 12px;
+    padding-left: 12px;
   }
 }

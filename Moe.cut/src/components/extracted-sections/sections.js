@@ -555,7 +555,10 @@ export function ScrollScaleButton() {
 	useEffect(() => () => clearTimeout(revealTimer.current), []);
 	useEffect(() => {
 		if (!showForm) return undefined;
-		const focusFrame = requestAnimationFrame(() => nameInput.current?.focus({ preventScroll: true }));
+		const focusFrame = requestAnimationFrame(() => {
+			if (matchMedia("(max-width: 700px)").matches) slot.current?.scrollTo({ top: 0 });
+			nameInput.current?.focus({ preventScroll: true });
+		});
 		return () => cancelAnimationFrame(focusFrame);
 	}, [showForm]);
 	const handleBreak = () => {

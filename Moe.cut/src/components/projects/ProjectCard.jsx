@@ -1,14 +1,4 @@
-import { useState } from "react";
-
-export default function ProjectCard({ project }) {
-  const [touchOpen, setTouchOpen] = useState(false);
-  const activate = (event) => {
-    if (!matchMedia("(hover: none)").matches) return;
-    if (!touchOpen) {
-      event.preventDefault();
-      setTouchOpen(true);
-    }
-  };
+export default function ProjectCard({ project, onSelect }) {
   const content = (
     <>
       <img className="cursor-target" src={project.image} alt={project.alt} loading="lazy" width="1200" height="675" style={{ objectPosition: project.position }} />
@@ -22,12 +12,8 @@ export default function ProjectCard({ project }) {
     </>
   );
   return (
-    <article className={`project-card cursor-target${touchOpen ? " is-open" : ""}`}>
-      {project.url ? (
-        <a href={project.url} aria-label={`View ${project.title}`} onClick={activate}>{content}</a>
-      ) : (
-        <button type="button" aria-label={`Preview ${project.title}`} aria-expanded={touchOpen} onClick={activate}>{content}</button>
-      )}
+    <article className="project-card cursor-target">
+      <button type="button" aria-label={`Preview ${project.title}`} onClick={() => onSelect(project)}>{content}</button>
     </article>
   );
 }

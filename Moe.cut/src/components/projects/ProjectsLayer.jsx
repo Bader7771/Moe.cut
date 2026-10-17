@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useVisibility } from "../../performance/useVisibility";
 import ProjectGrid from "./ProjectGrid";
 import ProjectsIntro from "./ProjectsIntro";
+import ProjectPortal from "./ProjectPortal";
 import TargetCursor from "../TargetCursor";
 import { projects as fallbackProjects } from "../../data/projects";
 
@@ -12,6 +13,7 @@ export default function ProjectsLayer() {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedProject, setSelectedProject] = useState(null);
 
   useEffect(() => {
     if (!near || fetched.current) return undefined;
@@ -50,8 +52,9 @@ export default function ProjectsLayer() {
         <div style={{ padding: '2rem', textAlign: 'center', color: '#fff' }}>Loading projects...</div>
       ) : <>
         {error && <p className="projects-data-notice" role="status">Live project data is temporarily unavailable. Showing the latest cached work.</p>}
-        <ProjectGrid projects={projects} />
+        <ProjectGrid projects={projects} onSelect={setSelectedProject} />
       </>}
+      {selectedProject && <ProjectPortal key={selectedProject.id} project={selectedProject} onClose={() => setSelectedProject(null)} />}
     </section>
   );
 }

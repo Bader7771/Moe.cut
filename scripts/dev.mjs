@@ -1,7 +1,17 @@
 import { spawn } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
+
+const frontendRoot = fileURLToPath(new URL('../Moe.cut/', import.meta.url));
 const children = [
-  spawn('npm', ['--prefix', 'Moe.cut', 'start'], { stdio: 'inherit', env: { ...process.env, DATA_STORE: 'file', PORT: '5001' } }),
-  spawn('npm', ['--prefix', 'Moe.cut', 'run', 'dev', '--', '--host', '127.0.0.1'], { stdio: 'inherit' })
+  spawn(process.execPath, ['server.js'], {
+    cwd: frontendRoot,
+    stdio: 'inherit',
+    env: { ...process.env, PORT: '5001' },
+  }),
+  spawn('npm', ['run', 'dev:client', '--', '--host', '127.0.0.1'], {
+    cwd: frontendRoot,
+    stdio: 'inherit',
+  }),
 ];
 let stopping = false;
 function stop(code = 0) { if (stopping) return; stopping = true; children.forEach(child => child.kill()); process.exitCode = code; }

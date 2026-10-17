@@ -15,7 +15,7 @@ router.get('/:id', async (req, res, next) => {
 async function save(req, res, next) {
   try {
     const data = {};
-    for (const key of 'projectId title category client year image video url alt position'.split(' ')) if (req.body[key] !== undefined) data[key] = req.body[key];
+    for (const key of 'projectId title description category client year image video url alt position'.split(' ')) if (req.body[key] !== undefined) data[key] = req.body[key];
     if (!req.params.id && !data.projectId) data.projectId = `PROJ-${randomUUID()}`;
     if (req.file) data.image = await saveUpload(req.file);
     const record = await records.save(data, req.params.id);

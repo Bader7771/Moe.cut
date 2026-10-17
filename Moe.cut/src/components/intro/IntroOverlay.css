@@ -1,0 +1,66 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;750;800;900&display=swap');
+
+/* Every rule is scoped to this temporary overlay. No website/hero styles change. */
+.intro-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  overflow: hidden;
+  pointer-events: none;
+  background: #ffffff;
+  color: #000000;
+  font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+  font-weight: 500;
+  -webkit-font-smoothing: antialiased;
+}
+.intro-overlay *, .intro-overlay *::before, .intro-overlay *::after { box-sizing: border-box; }
+.intro-overlay h2, .intro-overlay p, .intro-overlay figure { margin: 0; }
+.intro-overlay h2 { font-family: inherit; text-wrap: balance; }
+.intro-overlay button { border: 0; background: transparent; color: #000; font: inherit; cursor: pointer; pointer-events: auto; }
+.intro-overlay button:disabled { cursor: default; }
+.intro-overlay button:focus-visible { outline: 2px solid #2563eb; outline-offset: 4px; }
+.intro-overlay .con-intro-top { position: absolute; z-index: 3; top: 32px; left: 40px; right: 40px; display: flex; align-items: center; justify-content: space-between; color: #000; font-size: 8px; letter-spacing: 1.3px; }
+.intro-overlay .con-intro-brand { font-size: 14px; letter-spacing: -.6px; font-weight: 800; }
+.intro-overlay .con-camera { position: absolute; inset: 0; }
+.intro-overlay .con-scene { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 80px 24px 110px; text-align: center; visibility: hidden; }
+.intro-overlay .con-scene h2 { color: #000; font-size: clamp(38px, 5.5vw, 80px); font-weight: 750; line-height: 1.1; letter-spacing: -.055em; }
+.intro-overlay .con-scene-persona h2 { max-width: 95vw; font-size: clamp(36px, 6.2vw, 90px); font-weight: 800; }
+.intro-overlay .con-greeting-dot { color: #2563eb; }
+.intro-overlay .con-word-mask { display: inline-block; overflow: hidden; vertical-align: bottom; padding-bottom: .12em; margin-bottom: -.12em; }
+.intro-overlay .con-word { display: inline-block; }
+.intro-overlay .con-scene-pitch h2 { max-width: 1000px; }
+.intro-overlay .con-scene-pitch em { font-style: normal; color: #2563eb; }
+.intro-overlay .con-scene-reveal > p { font-size: clamp(24px, 3vw, 40px); letter-spacing: -.05em; margin-bottom: 20px; }
+.intro-overlay .con-scene-reveal .con-stomp { position: relative; font-size: clamp(66px, 10.3vw, 150px); font-weight: 900; line-height: .85; letter-spacing: -.075em; transform: rotate(-3deg); text-shadow: 1px 1px #2563eb, 2px 2px #2563eb, 3px 3px #2563eb, 4px 4px #2563eb, 5px 5px #2563eb, 6px 6px #2563eb, 7px 7px #2563eb, 8px 8px #2563eb, 9px 10px #000; }
+.intro-overlay .con-stomp > span { position: absolute; right: -.85em; top: -.2em; font-size: .2em; text-shadow: none; }
+.intro-overlay .con-underlined { position: relative; display: inline-block; color: #2563eb; }
+.intro-overlay .con-underlined svg { position: absolute; width: 104%; height: 20px; bottom: -18px; left: -2%; color: #2563eb; }
+.intro-overlay .con-photo-deck { position: absolute; top: 48%; left: 50%; width: clamp(220px, 24vw, 300px); aspect-ratio: 3 / 4; z-index: 2; transform-origin: center center; pointer-events: none; }
+.intro-overlay .con-polaroid { background: #fff; border: 1px solid #00000020; border-radius: 2px; box-shadow: 0 3px 3px #00000006, 0 14px 26px #00000016, 0 1px 1px #0000001a; }
+.intro-overlay .con-photo-deck .con-polaroid { position: absolute; top: 0; left: 0; width: 100%; padding: 12px 12px 0; }
+.intro-overlay .con-photo-image { position: relative; overflow: hidden; aspect-ratio: 4 / 4.7; background: #fff; }
+.intro-overlay .con-photo-image img { width: 100%; height: 100%; object-fit: cover; display: block; filter: grayscale(1); }
+.intro-overlay .con-photo-image > span { position: absolute; inset: 0; box-shadow: inset 0 0 10px #00000010; }
+.intro-overlay .con-polaroid figcaption { text-align: center; color: #000; font: 500 13px/1.4 'Inter', sans-serif; letter-spacing: -.3px; padding: 18px 0 24px; }
+.intro-overlay .con-intro-controls { position: absolute; z-index: 3; bottom: 29px; left: 40px; right: 40px; display: flex; justify-content: space-between; align-items: center; }
+.intro-overlay .con-scene-number { font-family: monospace; font-size: 10px; color: #000; }
+.intro-overlay .con-scene-number > span { color: #2563eb; margin-left: 6px; }
+.intro-overlay .con-intro-controls > div { display: flex; align-items: center; gap: 15px; }
+.intro-overlay .con-intro-controls button { display: inline-flex; align-items: center; gap: 14px; font-size: 11px; color: #000; padding: 12px 0 12px 12px; }
+.intro-overlay .con-intro-controls button:first-child { font-size: 13px; padding: 10px; min-width: 35px; justify-content: center; }
+.intro-overlay .con-intro-controls button svg { width: 15px; height: 15px; color: #2563eb; }
+.intro-overlay .con-intro-progress { position: absolute; bottom: 0; left: 0; width: 100%; height: 2px; background: #2563eb; transform-origin: left; transform: scaleX(0); }
+@media (max-width: 700px) {
+  .intro-overlay .con-intro-top { top: 24px; left: 24px; right: 24px; }
+  .intro-overlay .con-intro-top > span:last-child { font-size: 6px; letter-spacing: .8px; }
+  .intro-overlay .con-intro-brand { font-size: 12px; }
+  .intro-overlay .con-intro-controls { left: 24px; right: 24px; bottom: 22px; }
+  .intro-overlay .con-scene { padding-inline: 24px; }
+  .intro-overlay .con-scene h2 { font-size: clamp(33px, 7vw, 49px); }
+  .intro-overlay .con-scene-persona h2 { max-width: 390px; font-size: clamp(38px, 9vw, 58px); }
+  .intro-overlay .con-scene-pitch h2 { max-width: 480px; }
+  .intro-overlay .con-scene-pitch br { display: none; }
+  .intro-overlay .con-scene-reveal .con-stomp { font-size: clamp(64px, 16vw, 100px); }
+  .intro-overlay .con-photo-deck { width: 230px; }
+  .intro-overlay .con-underlined svg { bottom: -15px; height: 16px; }
+}

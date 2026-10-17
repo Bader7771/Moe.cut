@@ -893,3 +893,47 @@
 .extracted-editorial-scroll *::after {
   box-sizing: border-box;
 }
+
+/* Keep the original yellow-box interaction intact; only tighten its viewport
+   fit and form ergonomics on phones. */
+@media (max-width: 700px) {
+  .extracted-scroll-button-slot {
+    gap: 18px;
+    padding: max(20px, env(safe-area-inset-top)) 14px max(20px, env(safe-area-inset-bottom));
+    overscroll-behavior: contain;
+  }
+
+  .extracted-box-prompt {
+    gap: 18px;
+  }
+
+  .extracted-contact-title {
+    font-size: clamp(2rem, 10vw, 3rem);
+    line-height: 0.96;
+  }
+
+  .extracted-box-instruction {
+    max-width: 28ch;
+    font-size: clamp(1.2rem, 5.8vw, 1.65rem);
+  }
+
+  .extracted-contact-panel,
+  .extracted-contact-form {
+    width: 100%;
+  }
+
+  .extracted-contact-form {
+    gap: 14px;
+  }
+
+  .extracted-contact-field textarea {
+    min-height: 112px;
+  }
+}
+
+@media (max-width: 360px) {
+  .extracted-scroll-button-slot {
+    padding-right: 12px;
+    padding-left: 12px;
+  }
+}

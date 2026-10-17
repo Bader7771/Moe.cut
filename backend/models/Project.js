@@ -11,6 +11,12 @@ const projectSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    description: {
+      type: String,
+      default: '',
+      trim: true,
+      maxlength: 250,
+    },
     category: {
       type: String,
       required: true,
