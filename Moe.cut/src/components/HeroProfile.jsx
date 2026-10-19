@@ -3,7 +3,10 @@ import profileImage from "../assets/editorial/frame-03.jpg";
 import { useVisibility } from "../performance/useVisibility";
 import CollaboratorImage from "./CollaboratorImage";
 import AvailabilityPill from "./AvailabilityPill";
+import HeroSplitFlap from "./HeroSplitFlap";
 import AnimatedAvailabilityButton from "./AnimatedAvailabilityButton";
+import "./HeroProfile.css";
+import { scrollToSection } from "../utils/scrollToSection";
 
 function VerifiedIcon() {
   return (
@@ -95,12 +98,13 @@ export default function HeroProfile() {
   return (
     <div ref={hero} className="hero-foreground">
       <div className="hero-profile-card">
-        <img className="profile-avatar" src={profileImage} alt="Moe.cut creative director" />
-        <AvailabilityPill />
+        <img className="profile-avatar" src={profileImage} alt="Moe.cut creative director" width="104" height="104" />
+        <AvailabilityPill visible={visible} />
+        <HeroSplitFlap />
         <h1>Moe.cut</h1>
         <p>Creative direction and video editing built to be remembered.</p>
         <div className="hero-actions">
-          <a className="hero-button hero-button-secondary" href="#projects">
+          <a className="hero-button hero-button-secondary" href="#projects" onClick={scrollToSection}>
             <span aria-hidden="true">↓</span> See selected work
           </a>
           <AnimatedAvailabilityButton />

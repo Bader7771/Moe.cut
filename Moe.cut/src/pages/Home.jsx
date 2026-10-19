@@ -60,7 +60,7 @@ export default function Home() {
   return (
     <div id="top" className="experience app-container">
       <div ref={heroRef} className="hero-layer">
-        <Header email={siteContent.contact.email} />
+        <Header whatsapp={siteContent.contact.whatsapp} />
         <Suspense fallback={null}><GhostCursor
           trailLength={35}
           grainIntensity={0.03}
@@ -90,7 +90,6 @@ export default function Home() {
       <EditorialProjects />
       <Footer
         instagram={siteContent.footer.instagram}
-        email={siteContent.footer.email}
       />
     </div>
   );

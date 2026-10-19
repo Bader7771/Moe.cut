@@ -6,9 +6,9 @@
   overflow-y: auto;
   overscroll-behavior: contain;
   color: #fff;
-  background: rgba(0, 0, 0, 0.75);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(0, 0, 0, 0.7) !important;
+  backdrop-filter: blur(24px) !important;
+  -webkit-backdrop-filter: blur(24px) !important;
   font-family: var(--font-primary);
   animation: project-portal-in 220ms ease both;
 }
@@ -99,8 +99,18 @@
 @keyframes project-portal-out { from { opacity: 1; } to { opacity: 0; } }
 
 @media (max-width: 600px) {
-  .project-portal-content { padding: 6rem 1.25rem max(6rem, env(safe-area-inset-bottom)); }
-  .project-portal-media { margin: 2rem 0; }
+  .project-portal-content { padding: 88px 16px max(32px, env(safe-area-inset-bottom)); }
+  .project-portal-media { margin: 24px 0; }
+  .project-portal-close {
+    top: max(12px, env(safe-area-inset-top));
+    left: max(12px, env(safe-area-inset-left));
+    width: 48px;
+    height: 48px;
+  }
+  .project-portal-header h2 { font-size: clamp(30px, 9vw, 44px); line-height: 1.08; }
+  .project-portal-description { font-size: 14px; line-height: 1.65; }
+  .project-portal-footer { margin-top: 40px; }
+  .project-portal-wordmark { font-size: clamp(40px, 14vw, 72px); line-height: 1; }
 }
 @media (prefers-reduced-motion: reduce) {
   .project-portal, .project-portal.is-closing { animation-duration: 1ms; }

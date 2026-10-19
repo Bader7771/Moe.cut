@@ -2,11 +2,9 @@ export const siteContent = {
   name: "Moe.cut",
   descriptor: "VIDEO EDITING STUDIO",
   contact: {
-    email: "hello@mo-cut-motion.com",
-    whatsapp: import.meta.env.VITE_WHATSAPP_NUMBER || "",
+    whatsapp: "https://wa.me/212681334600",
   },
   footer: {
-    instagram: "#",
-    email: "mailto:hello@mo-cut-motion.com",
+    instagram: "https://www.instagram.com/_therealaflaton/",
   },
 };

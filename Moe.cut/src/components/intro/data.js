@@ -1,4 +1,7 @@
+import firstPortrait from "../../assets/intro-img/WhatsApp Image 2026-10-17 at 22.24.16.jpeg";
+import finalPortrait from "../../assets/intro-img/WhatsApp Image 2026-10-17 at 22.24.16 (1).jpeg";
+
 export const PHOTOS = [
-  { src: '/conference/workspace.jpg', fallback: '/conference/workspace.svg', alt: 'A creative workspace with a laptop and warm afternoon light', caption: 'a little idea, a lot of coffee.', className: 'desk-photo' },
-  { src: '/conference/people.jpg', fallback: '/conference/people.svg', alt: 'Creative people gathered around a table', caption: 'better things happen together.', className: 'people-photo' },
+  { src: firstPortrait, alt: 'Mohamed on a sunlit city balcony', className: 'desk-photo' },
+  { src: finalPortrait, alt: 'Mohamed overlooking the city at golden hour', className: 'people-photo' },
 ];

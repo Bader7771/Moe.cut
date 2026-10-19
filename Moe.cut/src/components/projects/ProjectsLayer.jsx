@@ -5,6 +5,7 @@ import ProjectsIntro from "./ProjectsIntro";
 import ProjectPortal from "./ProjectPortal";
 import TargetCursor from "../TargetCursor";
 import { projects as fallbackProjects } from "../../data/projects";
+import "./ProjectsResponsive.css";
 
 export default function ProjectsLayer() {
   const section = useRef(null);

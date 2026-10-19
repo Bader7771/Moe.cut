@@ -1,0 +1,216 @@
+/* Hero-only refinements override the older shared layout breakpoints. */
+.hero-layer .hero-foreground {
+  justify-content: flex-start;
+  gap: clamp(28px, 5svh, 48px);
+}
+
+.hero-layer .hero-profile-card {
+  flex: 0 0 auto;
+  min-width: 0;
+  margin-block: auto;
+  padding-block: 12px;
+}
+
+.hero-profile-card .profile-avatar {
+  height: auto;
+  flex: none;
+}
+
+.hero-profile-card .availability-pill {
+  max-width: 100%;
+  min-height: 36px;
+  margin: 20px 0 0;
+  padding: 8px 14px;
+  gap: 9px;
+  color: #323832;
+  font: 500 12px/1.4 var(--font-mono);
+}
+
+.hero-profile-card .availability-dot {
+  flex: 0 0 8px;
+  background: #209b46;
+  box-shadow: 0 0 0 3px rgba(32, 155, 70, .1);
+  animation: none;
+}
+
+.hero-profile-card .hero-split-flap {
+  flex: none;
+  margin-top: 18px;
+  max-width: 100%;
+}
+
+.availability-messages {
+  display: grid;
+  min-width: 0;
+}
+
+.availability-messages > span {
+  grid-area: 1 / 1;
+  opacity: 0;
+  transform: translateY(3px);
+  transition: opacity 240ms ease, transform 240ms ease;
+  white-space: nowrap;
+}
+
+.availability-messages > span[data-active="true"] {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.hero-layer .hero-profile-card > p {
+  max-width: 42ch;
+  text-wrap: balance;
+}
+
+.hero-profile-card .hero-actions {
+  --hero-button-height: 50px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
+  width: min(480px, 100%);
+  max-width: none;
+  gap: 12px;
+}
+
+.hero-actions .availability-button-shell {
+  display: flex;
+  min-width: 0;
+}
+
+.hero-profile-card .hero-button,
+.hero-actions .availability-button-shell .uiverse {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-width: 0;
+  min-height: var(--hero-button-height);
+  border-radius: 999px;
+  font: 600 14px/1.4 var(--font-primary);
+  letter-spacing: 0;
+  white-space: nowrap;
+  transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease;
+}
+
+.hero-profile-card .hero-button {
+  padding: 10px 18px;
+  gap: 8px;
+}
+
+.hero-actions .availability-button-shell .uiverse .wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-width: 0;
+  min-height: var(--hero-button-height);
+  padding: 10px 18px;
+  border-radius: inherit;
+}
+
+.hero-actions .availability-button-shell .uiverse::before {
+  border-radius: inherit;
+}
+
+.hero-actions .availability-button-shell .uiverse {
+  box-shadow: 0 5px 18px rgba(0, 91, 255, .18);
+}
+
+@media (hover: hover) {
+  .hero-actions .availability-button-shell .uiverse:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 22px rgba(0, 91, 255, .25);
+  }
+}
+
+.hero-profile-card .hero-button:focus-visible,
+.hero-actions .availability-button-shell .uiverse:focus-visible,
+.hero-layer .navbar-work:focus-visible {
+  outline: 2px solid var(--foreground);
+  outline-offset: 4px;
+}
+
+.hero-profile-card .hero-button:active,
+.hero-actions .availability-button-shell .uiverse:active {
+  transform: translateY(0) scale(.98);
+}
+
+.hero-layer .collaborator-scroller {
+  margin-top: 0;
+}
+
+.hero-layer .navbar-work {
+  min-height: 48px;
+}
+
+.hero-layer .navbar-work:active {
+  transform: rotate(0deg);
+}
+
+@media (max-width: 820px) {
+  .hero-layer {
+    --navbar-height: 72px;
+    min-height: 100svh;
+  }
+
+  .hero-layer .site-header {
+    top: 0;
+    right: 0;
+    left: 0;
+  }
+
+  .hero-layer .hero-foreground {
+    min-height: 100svh;
+    padding: calc(var(--navbar-height) + 24px) 0 24px;
+    gap: 28px;
+  }
+
+  .hero-layer .hero-profile-card {
+    width: min(520px, calc(100% - 40px));
+  }
+
+  .hero-profile-card .profile-avatar {
+    width: 88px;
+  }
+
+  .hero-layer .hero-profile-card h1 {
+    margin-top: 20px;
+    font-size: clamp(44px, 10vw, 64px);
+    line-height: 1;
+  }
+
+  .hero-layer .hero-profile-card > p {
+    max-width: 34ch;
+    margin-top: 14px;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .hero-profile-card .hero-actions {
+    --hero-button-height: 48px;
+    margin-top: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-profile-card .hero-actions {
+    grid-template-columns: minmax(0, 1fr);
+    width: min(320px, 100%);
+    gap: 12px;
+  }
+
+  .hero-profile-card .availability-pill {
+    font-size: 11px;
+    padding-inline: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-profile-card .availability-messages > span,
+  .hero-profile-card .hero-button,
+  .hero-actions .availability-button-shell .uiverse,
+  .hero-layer .navbar-work {
+    transition: none;
+    transform: none;
+  }
+}
