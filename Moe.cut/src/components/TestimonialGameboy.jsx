@@ -2,8 +2,11 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import "./TestimonialGameboy.css";
 import GameBoy from "./GameBoy";
 import { useVisibility } from "../performance/useVisibility";
+import "./TestimonialGameboyMobile.css";
+import { useRetroSounds } from "./useRetroSounds";
 
 const padNumber = (number) => String(number).padStart(2, "0");
+const COMPACT_QUERY = '(max-width: 820px), (max-width: 1050px) and (pointer: coarse)';
 
 function PreviewVideo({ src, visible, near }) {
   const videoRef = useRef(null);
@@ -38,6 +41,19 @@ export default function TestimonialGameboy() {
   const [selectedId, setSelectedId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);
+  const [compact, setCompact] = useState(() => window.matchMedia(COMPACT_QUERY).matches);
+  const [mobile, setMobile] = useState(() => window.matchMedia('(max-width: 700px)').matches);
+  const choicesRef = useRef(null);
+  const { enabled: soundsEnabled, toggle: toggleSounds, play: playSound } = useRetroSounds();
+
+  useEffect(() => {
+    const media = window.matchMedia(COMPACT_QUERY);
+    const phone = window.matchMedia('(max-width: 700px)');
+    const update = () => { setCompact(media.matches); setMobile(phone.matches); };
+    media.addEventListener('change', update);
+    phone.addEventListener('change', update);
+    return () => { media.removeEventListener('change', update); phone.removeEventListener('change', update); };
+  }, []);
 
   const sectionRef = useRef(null);
   const near = useVisibility(sectionRef, "800px");
@@ -61,6 +77,17 @@ export default function TestimonialGameboy() {
 
   const currentIndex = Math.max(0, testimonials.findIndex(item => item._id === selectedId));
   const activeTestimonial = testimonials[currentIndex];
+
+  useEffect(() => {
+    if (!compact || mobile) return;
+    const rail = choicesRef.current;
+    const active = rail?.querySelector('[aria-pressed="true"]');
+    if (!active) return;
+    rail.scrollTo({
+      left: Math.max(0, active.offsetLeft - (rail.clientWidth - active.offsetWidth) / 2),
+      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth',
+    });
+  }, [compact, mobile, currentIndex, testimonials.length]);
 
   useEffect(() => {
     if (!near) return undefined;
@@ -123,14 +150,15 @@ export default function TestimonialGameboy() {
       if (event.altKey || event.ctrlKey || event.metaKey || event.target.closest('input, textarea, select, [contenteditable]:not([contenteditable="false"])')) return;
       const rect = sectionRef.current?.getBoundingClientRect();
       if (!rect || rect.bottom < 0 || rect.top > window.innerHeight) return;
-      if (event.key === 'ArrowLeft') { event.preventDefault(); handlePrev(); }
-      else if (event.key === 'ArrowRight') { event.preventDefault(); handleNext(); }
-      else if (!event.repeat && ['m', 'c'].includes(event.key.toLowerCase())) { event.preventDefault(); toggleMute(); }
-      else if (!event.repeat && event.key.toLowerCase() === 'v') { event.preventDefault(); togglePlayback(); }
+      if (event.key === 'ArrowLeft') { event.preventDefault(); if (!event.repeat) playSound('navigation'); handlePrev(); }
+      else if (event.key === 'ArrowRight') { event.preventDefault(); if (!event.repeat) playSound('navigation'); handleNext(); }
+      else if (['ArrowUp', 'ArrowDown'].includes(event.key) && event.target.closest('.gameboy')) { event.preventDefault(); if (!event.repeat) playSound('navigation'); }
+      else if (!event.repeat && ['m', 'c'].includes(event.key.toLowerCase())) { event.preventDefault(); playSound('confirm'); toggleMute(); }
+      else if (!event.repeat && event.key.toLowerCase() === 'v') { event.preventDefault(); playSound('action'); togglePlayback(); }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [handleNext, handlePrev, toggleMute, togglePlayback]);
+  }, [handleNext, handlePrev, toggleMute, togglePlayback, playSound]);
 
   return (
     <section ref={sectionRef} className="testomina-gam-boy-section" aria-labelledby="testimonials-title">
@@ -139,7 +167,7 @@ export default function TestimonialGameboy() {
         <h2 id="testimonials-title">Reviews, on replay.</h2>
       </div>
 
-      <div className="gameboy-top-pills" aria-label="Choose a testimonial">
+      <div ref={choicesRef} className="gameboy-top-pills" aria-label="Choose a testimonial">
         {testimonials.map((item, index) => (
           <button
             key={item._id}
@@ -167,7 +195,7 @@ export default function TestimonialGameboy() {
               }}
               onClick={() => move(offset)} tabIndex={slotVisible && !movement ? 0 : -1}
               aria-hidden={!slotVisible} aria-label={`Watch ${item.title}`} disabled={!!movement || !slotVisible}>
-              <PreviewVideo src={item.video} visible={visible && slotVisible} near={near && slotVisible} />
+              <PreviewVideo src={item.video} visible={!mobile && visible && slotVisible && (!compact || Math.abs(position) === 1)} near={!mobile && near && slotVisible && (!compact || Math.abs(position) === 1)} />
               <span className="side-preview-title">{item.title}</span>
             </button>
           );
@@ -178,7 +206,8 @@ export default function TestimonialGameboy() {
             : !activeTestimonial ? <p>No testimonials yet.</p>
             : <GameBoy activeTestimonial={activeTestimonial} onPrev={handlePrev} onNext={handleNext}
                 muted={muted} playing={playing} visible={visible} onToggleMute={toggleMute} onTogglePlayback={togglePlayback}
-                onPlayingChange={setPlaying} pressed={pressed} />}
+                onPlayingChange={setPlaying} pressed={pressed}
+                onButtonSound={playSound} soundsEnabled={soundsEnabled} onToggleSounds={toggleSounds} />}
         </div>
       </div>
       <p className="gameboy-now-playing" aria-live="polite">{activeTestimonial ? `${padNumber(currentIndex + 1)} / ${padNumber(testimonials.length)} — ${activeTestimonial.title}` : ''}</p>

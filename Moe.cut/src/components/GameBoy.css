@@ -288,6 +288,26 @@
 
 .gameboy button:focus-visible { outline: 2px solid #17191d; outline-offset: 3px; }
 
+.gameboy .console-bottom { padding-right: 44px; }
+.gameboy .gameboy-sounds-toggle {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 12px;
+  transform: translateY(-50%);
+  border: 0;
+  border-radius: 50%;
+  color: var(--gb-ink);
+  background: transparent;
+}
+.gameboy .gameboy-sounds-toggle svg { width: 18px; height: 18px; opacity: .7; }
+.gameboy .gameboy-sounds-toggle:hover { background: rgba(255,255,255,.12); }
+.gameboy .gameboy-sounds-toggle:active { background: rgba(0,0,0,.06); }
+
 @media (prefers-reduced-motion: reduce) {
   .gameboy .dpad-cross,
   .gameboy .action-key { transition: none !important; }

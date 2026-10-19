@@ -6,6 +6,7 @@ import ProjectPortal from "./ProjectPortal";
 import TargetCursor from "../TargetCursor";
 import { projects as fallbackProjects } from "../../data/projects";
 import "./ProjectsResponsive.css";
+import { useProjectsReveal } from "./useProjectsReveal";
 
 export default function ProjectsLayer() {
   const section = useRef(null);
@@ -15,6 +16,7 @@ export default function ProjectsLayer() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedProject, setSelectedProject] = useState(null);
+  useProjectsReveal(section, projects);
 
   useEffect(() => {
     if (!near || fetched.current) return undefined;

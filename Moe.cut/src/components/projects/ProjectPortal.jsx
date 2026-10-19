@@ -1,8 +1,17 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import "./ProjectPortal.css";
+import { usePortalReveal } from "./usePortalReveal";
 
 const CLOSE_DURATION = 180;
+
+function mediaLink(value) {
+  if (!value) return null;
+  try {
+    const url = new URL(value, window.location.origin);
+    return ['http:', 'https:'].includes(url.protocol) ? url.href : null;
+  } catch { return null; }
+}
 
 export default function ProjectPortal({ project, onClose }) {
   const dialog = useRef(null);
@@ -10,6 +19,10 @@ export default function ProjectPortal({ project, onClose }) {
   const closeTimer = useRef(0);
   const closingRef = useRef(false);
   const [closing, setClosing] = useState(false);
+  const metadata = [['Category', project.category], ['Client', project.client], ['Year', project.year]].filter(([, value]) => value);
+  const projectUrl = mediaLink(project.url);
+  const videoUrl = mediaLink(project.video);
+  usePortalReveal(dialog);
 
   const requestClose = useCallback(() => {
     if (closingRef.current) return;
@@ -70,7 +83,7 @@ export default function ProjectPortal({ project, onClose }) {
       className={`project-portal${closing ? " is-closing" : ""}`}
       role="presentation"
       onMouseDown={(event) => {
-        if (event.target === event.currentTarget) requestClose();
+        if (event.target === event.currentTarget || event.target === dialog.current) requestClose();
       }}
     >
       <article
@@ -81,15 +94,31 @@ export default function ProjectPortal({ project, onClose }) {
         aria-labelledby="project-portal-title"
         aria-describedby={project.description ? "project-portal-description" : undefined}
       >
-        <button ref={closeButton} className="project-portal-close" type="button" onClick={requestClose} aria-label={`Close ${project.title} project preview`}>✕</button>
         <div className="project-portal-content">
+          <div className="project-portal-toolbar">
+            <button ref={closeButton} className="project-portal-close" type="button" onClick={requestClose} aria-label={`Close ${project.title} project preview`}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path d="m10 5-7 7 7 7M3 12h18" /></svg>
+              Back to projects
+            </button>
+          </div>
           <header className="project-portal-header">
+            <p className="project-portal-label">Selected work{project.projectId || project.id ? ` / ${project.projectId || project.id}` : ''}</p>
             <h2 id="project-portal-title">{project.title}</h2>
+            {metadata.length > 0 && <dl className="project-portal-metadata">
+              {metadata.map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}
+            </dl>}
           </header>
           <figure className="project-portal-media">
-            <img src={project.image} alt={project.alt || project.title} style={{ objectPosition: project.position }} />
+            <img src={project.image} alt={project.alt || project.title} />
           </figure>
-          {project.description && <p id="project-portal-description" className="project-portal-description">{project.description}</p>}
+          {project.description && <div className="project-portal-about">
+            <h3 className="project-portal-label">About the project</h3>
+            <p id="project-portal-description" className="project-portal-description">{project.description}</p>
+          </div>}
+          {(projectUrl || videoUrl) && <nav className="project-portal-actions" aria-label="Project links">
+            {projectUrl && <a href={projectUrl} target="_blank" rel="noopener noreferrer">View project <span aria-hidden="true">↗</span></a>}
+            {videoUrl && videoUrl !== projectUrl && <a href={videoUrl} target="_blank" rel="noopener noreferrer">Watch film <span aria-hidden="true">↗</span></a>}
+          </nav>}
           <footer className="project-portal-footer">
             <p className="project-portal-wordmark" aria-hidden="true">{project.title}</p>
           </footer>

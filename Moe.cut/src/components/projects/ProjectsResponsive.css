@@ -1,4 +1,12 @@
 /* Scope these rules to the existing project grid, after legacy breakpoints. */
+.projects-section.projects-layer .project-image-reveal {
+  position: absolute;
+  inset: 0;
+  display: block;
+  overflow: hidden;
+  border-radius: inherit;
+}
+
 .projects-section.projects-layer .project-card-copy strong {
   overflow-wrap: anywhere;
   line-height: 1.08;

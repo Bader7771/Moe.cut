@@ -1,7 +1,9 @@
 export default function ProjectCard({ project, onSelect }) {
   const content = (
     <>
-      <img className="cursor-target" src={project.image} alt={project.alt || project.title} loading="lazy" width="1200" height="675" style={{ objectPosition: project.position }} />
+      <span className="project-image-reveal">
+        <img className="cursor-target" src={project.image} alt={project.alt || project.title} loading="lazy" width="1200" height="675" style={{ objectPosition: project.position }} />
+      </span>
       <span className="project-shade" aria-hidden="true" />
       <span className="project-number">({project.id})</span>
       <span className="project-card-copy">

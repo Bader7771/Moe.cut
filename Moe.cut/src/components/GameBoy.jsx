@@ -3,20 +3,25 @@ import './GameBoy.css';
 
 // Native buttons retain click, touch, focus, and Space-key behavior.
 // Track Enter as well so a held keyboard press has the same physical feedback.
-function ConsoleButton({ className, children, ...props }) {
+function ConsoleButton({ className, children, onClick, onSound, sound = 'navigation', ...props }) {
   const [keyHeld, setKeyHeld] = useState(false);
+  const repeating = useRef(false);
   return (
     <button
       {...props}
       type="button"
       className={`${className}${keyHeld ? ' is-held' : ''}`}
+      onClick={event => {
+        if (!repeating.current) onSound?.(sound);
+        onClick?.(event);
+      }}
       onKeyDown={event => {
-        if (event.key === 'Enter' || event.key === ' ') setKeyHeld(true);
+        if (event.key === 'Enter' || event.key === ' ') { repeating.current = event.repeat; setKeyHeld(true); }
       }}
       onKeyUp={event => {
-        if (event.key === 'Enter' || event.key === ' ') setKeyHeld(false);
+        if (event.key === 'Enter' || event.key === ' ') { repeating.current = false; setKeyHeld(false); }
       }}
-      onBlur={() => setKeyHeld(false)}
+      onBlur={() => { repeating.current = false; setKeyHeld(false); }}
     >{children}</button>
   );
 }
@@ -24,7 +29,8 @@ function ConsoleButton({ className, children, ...props }) {
 const GameBoy = ({
   activeTestimonial,
   onPrev,
-  onNext, visible = true, muted, playing, onToggleMute, onTogglePlayback, onPlayingChange, pressed
+  onNext, visible = true, muted, playing, onToggleMute, onTogglePlayback, onPlayingChange, pressed,
+  onButtonSound, soundsEnabled, onToggleSounds
 }) => {
   const videoRef = useRef(null);
 
@@ -67,20 +73,24 @@ const GameBoy = ({
           </div>
           <ConsoleButton
             className="dpad-hit up"
+            onSound={onButtonSound}
             aria-label="Up"
           />
           <ConsoleButton
             className={`dpad-hit left ${pressed === 'left' ? 'is-pressed' : ''}`}
             onClick={onPrev}
+            onSound={onButtonSound}
             aria-label="Previous Testimonial"
           />
           <ConsoleButton
             className={`dpad-hit right ${pressed === 'right' ? 'is-pressed' : ''}`}
             onClick={onNext}
+            onSound={onButtonSound}
             aria-label="Next Testimonial"
           />
           <ConsoleButton
             className="dpad-hit down"
+            onSound={onButtonSound}
             aria-label="Down"
           />
         </div>
@@ -90,12 +100,16 @@ const GameBoy = ({
           <ConsoleButton
             className={`action-key ${pressed === 'c' ? 'is-pressed' : ''}`}
             onClick={onToggleMute}
+            onSound={onButtonSound}
+            sound="confirm"
             aria-pressed={!muted}
             aria-label={muted ? "Unmute video" : "Mute video"}
           />
           <ConsoleButton
             className={`action-key ${pressed === 'v' ? 'is-pressed' : ''}`}
             onClick={onTogglePlayback}
+            onSound={onButtonSound}
+            sound="action"
             aria-pressed={playing}
             aria-label={playing ? "Pause video" : "Play video"}
           />
@@ -108,6 +122,14 @@ const GameBoy = ({
       {/* Bottom Label Bar */}
       <div className="console-bottom">
         <span>C-MUTE • V-PLAY / PAUSE</span>
+        <button type="button" className="gameboy-sounds-toggle" onClick={onToggleSounds}
+          aria-label={soundsEnabled ? 'Mute button sounds' : 'Enable button sounds'}
+          aria-pressed={!soundsEnabled} title={`Button sounds: ${soundsEnabled ? 'on' : 'off'}`}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M11 5 6 9H3v6h3l5 4V5Z" />
+            {soundsEnabled ? <path d="M15 8a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14" /> : <path d="m16 9 5 6m0-6-5 6" />}
+          </svg>
+        </button>
       </div>
     </div>
   );
