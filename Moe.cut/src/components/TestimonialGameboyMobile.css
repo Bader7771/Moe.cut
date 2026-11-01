@@ -119,24 +119,45 @@
   }
 }
 
-/* Phones show the existing title and console only. Keep the full selectors and
-   video carousel in the DOM for tablet/desktop, without loading phone previews. */
+/* Keep the review identity visible and readable alongside touch controls. */
 @media (max-width: 700px) {
-  .experience .testomina-gam-boy-section { padding-top: 40px; }
-  .testomina-gam-boy-section .gameboy-section-heading { width: min(332px, 100%); }
-  .testomina-gam-boy-section .gameboy-section-heading > p,
+  .experience .testomina-gam-boy-section { padding: 36px 20px 28px; }
+  .testomina-gam-boy-section .gameboy-section-heading {
+    width: min(332px, 100%);
+    margin-bottom: 20px;
+  }
+  .testomina-gam-boy-section .gameboy-section-heading > p {
+    margin-bottom: 10px;
+    font-size: 10px;
+    line-height: 1.5;
+    letter-spacing: .1em;
+  }
+  .testomina-gam-boy-section .gameboy-section-heading h2 {
+    max-width: 10ch;
+    font-size: clamp(34px, 10vw, 42px);
+    line-height: 1.08;
+    letter-spacing: -.045em;
+    overflow-wrap: normal;
+    text-wrap: balance;
+  }
   .testomina-gam-boy-section .gameboy-top-pills,
   .testomina-gam-boy-section .testimonials-container .side-card-wrapper { display: none; }
   .testomina-gam-boy-section .testimonials-container { display: block; width: min(332px, 100%); margin: 0; }
-  /* Retain selection announcements for assistive technology without extra UI. */
   .testomina-gam-boy-section .gameboy-now-playing {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    margin: -1px;
-    padding: 0;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
+    position: static;
+    width: min(332px, 100%);
+    height: auto;
+    margin: 20px 0 0;
+    font-size: 12px;
+    line-height: 1.6;
+    letter-spacing: .01em;
+    text-align: left;
+    white-space: normal;
+    clip-path: none;
+  }
+  .testomina-gam-boy-section .gameboy .console-bottom {
+    font-size: 9px;
+    line-height: 1.4;
+    letter-spacing: 0;
   }
 }

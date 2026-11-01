@@ -4,6 +4,7 @@ import GameBoy from "./GameBoy";
 import { useVisibility } from "../performance/useVisibility";
 import "./TestimonialGameboyMobile.css";
 import { useRetroSounds } from "./useRetroSounds";
+import { useGameboyReveal } from "./useGameboyReveal";
 
 const padNumber = (number) => String(number).padStart(2, "0");
 const COMPACT_QUERY = '(max-width: 820px), (max-width: 1050px) and (pointer: coarse)';
@@ -77,6 +78,7 @@ export default function TestimonialGameboy() {
 
   const currentIndex = Math.max(0, testimonials.findIndex(item => item._id === selectedId));
   const activeTestimonial = testimonials[currentIndex];
+  useGameboyReveal(sectionRef, !loading && !loadError && !!activeTestimonial);
 
   useEffect(() => {
     if (!compact || mobile) return;

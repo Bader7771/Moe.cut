@@ -499,6 +499,7 @@ export function ScrollScaleButton() {
 	const impact = useRef(null);
 	const nameInput = useRef(null);
 	const completed = useRef(false);
+	const engaged = useRef(false);
 	const revealTimer = useRef(0);
 	const [damage, setDamage] = useState(0);
 	const [shattered, setShattered] = useState(false);
@@ -516,9 +517,10 @@ export function ScrollScaleButton() {
 			return undefined;
 		}
 		let animationFrame = 0;
+		const motion = matchMedia("(prefers-reduced-motion: reduce)");
 		const updateScale = () => {
 			animationFrame = 0;
-			if (completed.current) {
+			if (completed.current || engaged.current) {
 				slotNode.style.opacity = "1";
 				slotNode.style.visibility = "visible";
 				promptNode.style.transform = "scale(1)";
@@ -529,8 +531,8 @@ export function ScrollScaleButton() {
 			const rect = sectionNode.getBoundingClientRect();
 			const scrollDistance = Math.max(1, sectionNode.offsetHeight - innerHeight);
 			const sectionProgress = clamp(-rect.top / scrollDistance);
+			const reducedMotion = motion.matches;
 			const textIsFinished = getComputedStyle(textStage).visibility === "hidden";
-			const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
 			const buttonProgress = textIsFinished ? (reducedMotion ? 1 : clamp((sectionProgress - BUTTON_REVEAL_START) / (1 - BUTTON_REVEAL_START))) : 0;
 			const scale = START_SCALE + (1 - START_SCALE) * buttonProgress;
 			slotNode.style.opacity = buttonProgress;
@@ -545,11 +547,13 @@ export function ScrollScaleButton() {
 		};
 		addEventListener("scroll", scheduleUpdate, { passive: true });
 		addEventListener("resize", scheduleUpdate);
+		motion.addEventListener("change", scheduleUpdate);
 		updateScale();
 		return () => {
 			cancelAnimationFrame(animationFrame);
 			removeEventListener("scroll", scheduleUpdate);
 			removeEventListener("resize", scheduleUpdate);
+			motion.removeEventListener("change", scheduleUpdate);
 		};
 	}, []);
 	useEffect(() => () => clearTimeout(revealTimer.current), []);
@@ -563,10 +567,20 @@ export function ScrollScaleButton() {
 	}, [showForm]);
 	const handleBreak = () => {
 		if (shattered) return;
+		// Once a phone visitor starts pressing, focus/scroll adjustments must
+		// not shrink or hide the target between hits.
+		engaged.current = matchMedia('(max-width: 700px)').matches;
+		if (engaged.current) {
+			slot.current.style.opacity = '1';
+			slot.current.style.visibility = 'visible';
+			prompt.current.style.transform = 'scale(1)';
+			label.current.style.opacity = '1';
+			label.current.style.transform = 'translateY(0)';
+		}
 		const nextDamage = Math.min(damage + 1, MAX_DAMAGE);
 		setDamage(nextDamage);
 		const strength = 1 + nextDamage * .55;
-		impact.current?.animate([
+		if (!matchMedia('(prefers-reduced-motion: reduce)').matches) impact.current?.animate([
 			{ transform: "translate3d(0, 0, 0) rotate(0deg)" },
 			{ transform: `translate3d(${-strength}px, ${strength * .35}px, 0) rotate(${-strength * .35}deg)` },
 			{ transform: `translate3d(${strength}px, ${-strength * .25}px, 0) rotate(${strength * .25}deg)` },
@@ -752,16 +766,22 @@ export default function EditorialProjects() {
 	const poster = useRef(null);
 	const tracks = useRef([]);
 	useEffect(() => {
-		const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+		const motion = matchMedia("(prefers-reduced-motion: reduce)");
+		let disposed = false;
 		let frame = 0;
 		const update = () => {
 			frame = 0;
 			const node = wrapper.current;
 			const page = poster.current;
 			if (!node || !page) return;
+			const reducedMotion = motion.matches;
+			const mobile = innerWidth <= 700;
 			const rect = node.getBoundingClientRect();
 			const distance = Math.max(1, node.offsetHeight - innerHeight);
 			const progress = clamp(-rect.top / distance);
+			// Local pinning compensates for the phone page's overflow container.
+			// Animation progress and timing remain identical to desktop.
+			page.style.setProperty('--mobile-stage-y', `${mobile && !reducedMotion ? Math.max(0, Math.min(-rect.top, distance)) : 0}px`);
 			const transition = clamp(1 - rect.top / innerHeight);
 			const ease = (value) => value * value * (3 - 2 * value);
 			const stageExit = ease(reducedMotion ? clamp((transition - .72) / .2) : clamp((progress - .02) / .16));
@@ -881,12 +901,17 @@ export default function EditorialProjects() {
 			if (!frame) frame = requestAnimationFrame(update);
 		};
 		addEventListener("scroll", schedule, { passive: true });
-		addEventListener("resize", schedule);
+		motion.addEventListener("change", schedule);
+		const resize = schedule;
+		addEventListener("resize", resize);
+		document.fonts?.ready.then(() => { if (!disposed) resize(); });
 		update();
 		return () => {
+			disposed = true;
 			cancelAnimationFrame(frame);
 			removeEventListener("scroll", schedule);
-			removeEventListener("resize", schedule);
+			removeEventListener("resize", resize);
+			motion.removeEventListener("change", schedule);
 		};
 	}, []);
 	return /* @__PURE__ */ _jsx("div", {

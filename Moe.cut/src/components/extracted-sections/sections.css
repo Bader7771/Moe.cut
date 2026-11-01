@@ -415,6 +415,9 @@
 
 @media (prefers-reduced-motion: reduce) {
   .extracted-box-instruction > span { animation: none; }
+  .extracted-box-fragments > i,
+  .extracted-box-cracks > i,
+  .extracted-is-shattered > button { animation: none; }
   .extracted-contact-panel.extracted-is-visible {
     animation: none;
     opacity: 1;
@@ -516,53 +519,6 @@
   }
 }
 
-@media (max-width: 430px) {
-  .extracted-box-prompt {
-    gap: 18px;
-  }
-
-  .extracted-contact-panel {
-    width: min(520px, 100%);
-  }
-
-  .extracted-contact-field {
-    min-height: 50px;
-  }
-}
-
-@media (max-width: 700px) {
-  .extracted-editorial-scroll {
-    height: 155svh;
-  }
-  .extracted-editorial-type-stage {
-    gap: clamp(5px, 1svh, 9px);
-    padding-top: clamp(24px, 5svh, 42px);
-  }
-  .extracted-type-track-inner {
-    font-size: clamp(40px, 12vw, 54px);
-    line-height: 0.94;
-  }
-}
-
-@media (max-width: 700px) and (prefers-reduced-motion: reduce) {
-  .extracted-editorial-scroll {
-    height: auto;
-  }
-}
-
-@media (max-width: 700px) {
-  .extracted-editorial-scroll {
-    height: 155svh;
-  }
-  .extracted-editorial-type-stage {
-    gap: clamp(5px, 1svh, 9px);
-    padding-top: clamp(24px, 5svh, 42px);
-  }
-  .extracted-type-track-inner {
-    font-size: clamp(40px, 12vw, 54px);
-    line-height: 0.94;
-  }
-}
 .extracted-editorial-scroll {
   position: relative;
   z-index: 5;
@@ -606,19 +562,6 @@
 @media (max-width: 1024px) {
   .extracted-editorial-scroll {
     height: 190svh;
-  }
-}
-@media (max-width: 700px) {
-  .extracted-editorial-scroll {
-    height: 175svh;
-  }
-  .extracted-editorial-scroll .extracted-editorial {
-    padding: 0 15px;
-  }
-}
-@media (max-width: 360px) {
-  .extracted-editorial-scroll .extracted-editorial {
-    padding: 0 12px;
   }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -815,40 +758,25 @@
     font-size: clamp(44px, 6.4vw, 66px);
   }
 }
+/* The desktop composition stays intact: four single-line serif tracks,
+   original offsets, inline media, and the same scroll-driven transforms. */
 @media (max-width: 700px) {
+  /* Compress only the phone scroll runway, not the animation sequence. */
+  .extracted-editorial-scroll {
+    height: calc(100svh + clamp(160px, 22svh, 220px));
+  }
+  .extracted-editorial-scroll .extracted-editorial {
+    position: relative;
+    padding: 0 16px;
+    translate: 0 var(--mobile-stage-y, 0px);
+  }
   .extracted-editorial-type-stage {
-    gap: 4px;
-    padding-top: 5svh;
+    gap: clamp(2px, .35svh, 4px);
+    padding-top: clamp(30px, 7svh, 60px);
   }
   .extracted-type-track-inner {
-    font-size: clamp(38px, 12vw, 52px);
-    gap: 0.16em;
-  }
-  .extracted-track-one .extracted-type-track-inner {
-    margin-left: -22vw;
-  }
-  .extracted-track-two .extracted-type-track-inner {
-    margin-left: -88vw;
-  }
-  .extracted-track-three .extracted-type-track-inner {
-    margin-left: -42vw;
-  }
-  .extracted-track-four .extracted-type-track-inner {
-    margin-left: -70vw;
-  }
-  .extracted-editorial-track img {
-    height: 0.68em;
-  }
-  .extracted-track-three img {
-    height: 0.75em;
-  }
-  .extracted-inline-editorial-media.extracted-mobile-hide {
-    display: none;
-  }
-  .extracted-editorial-track .extracted-inline-editorial-media img {
-    width: calc(100% + 16px);
-    height: calc(100% + 16px);
-    margin: -8px;
+    font-size: clamp(56px, 16vw, 76px);
+    line-height: 1.08;
   }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -867,15 +795,6 @@
     will-change: auto;
   }
 }
-@media (max-width: 700px) {
-  .extracted-editorial-scroll { height: 155svh; }
-  .extracted-editorial-type-stage { gap: clamp(5px, 1svh, 9px); padding-top: clamp(24px, 5svh, 42px); }
-  .extracted-type-track-inner { font-size: clamp(40px, 12vw, 54px); line-height: .94; }
-}
-@media (max-width: 700px) and (prefers-reduced-motion: reduce) {
-  .extracted-editorial-scroll { height: auto; }
-}
-
 /* Integration with the portfolio's stacked sections. */
 .extracted-editorial-scroll {
   --background: #fff;
@@ -894,46 +813,68 @@
   box-sizing: border-box;
 }
 
-/* Keep the original yellow-box interaction intact; only tighten its viewport
-   fit and form ergonomics on phones. */
+/* Responsive sizing only: the original box scale, reveal, break interaction,
+   and overlaid form remain driven by the shared animation. */
 @media (max-width: 700px) {
   .extracted-scroll-button-slot {
-    gap: 18px;
-    padding: max(20px, env(safe-area-inset-top)) 14px max(20px, env(safe-area-inset-bottom));
+    gap: 20px;
+    padding: max(24px, env(safe-area-inset-top)) 20px max(24px, env(safe-area-inset-bottom));
     overscroll-behavior: contain;
   }
-
   .extracted-box-prompt {
-    gap: 18px;
-  }
-
-  .extracted-contact-title {
-    font-size: clamp(2rem, 10vw, 3rem);
-    line-height: 0.96;
-  }
-
-  .extracted-box-instruction {
-    max-width: 28ch;
-    font-size: clamp(1.2rem, 5.8vw, 1.65rem);
-  }
-
-  .extracted-contact-panel,
-  .extracted-contact-form {
     width: 100%;
+    gap: 20px;
   }
-
-  .extracted-contact-form {
-    gap: 14px;
+  .extracted-contact-title {
+    margin: 0;
+    font-size: clamp(44px, 13vw, 60px);
+    line-height: 1.05;
+    letter-spacing: -.045em;
+    text-wrap: balance;
   }
-
+  .extracted-box-instruction {
+    max-width: 100%;
+    min-height: 1.4em;
+    font-size: clamp(18px, 5.2vw, 23px);
+    line-height: 1.4;
+    letter-spacing: -.02em;
+    text-wrap: balance;
+  }
+  .extracted-scroll-button-layout { width: 5rem; height: 5rem; }
+  .extracted-box-size-shell { transform: scale(1.25); }
+  .extracted-contact-panel { width: 100%; }
+  .extracted-contact-form { gap: 20px; }
+  .extracted-contact-group > label {
+    font-size: 11px;
+    line-height: 1.5;
+    letter-spacing: .06em;
+  }
+  .extracted-contact-field input,
   .extracted-contact-field textarea {
-    min-height: 112px;
+    padding: 14px 12px;
+    font-size: 16px;
+    line-height: 1.5;
+    scroll-margin-block: 24px;
+  }
+  .extracted-contact-field textarea { min-height: 144px; }
+  .extracted-contact-submit {
+    min-height: 52px;
+    padding: 14px 12px;
+    font-size: 12px;
+    line-height: 1.5;
+    letter-spacing: .02em;
+    white-space: normal;
+    text-align: center;
+  }
+  .extracted-contact-message {
+    margin: 0;
+    font-size: 11px;
+    line-height: 1.65;
+    letter-spacing: 0;
   }
 }
 
-@media (max-width: 360px) {
-  .extracted-scroll-button-slot {
-    padding-right: 12px;
-    padding-left: 12px;
-  }
+@media (max-width: 700px) and (prefers-reduced-motion: reduce) {
+  .extracted-editorial-scroll { height: auto; }
+  .extracted-editorial-scroll .extracted-editorial { translate: none; }
 }
