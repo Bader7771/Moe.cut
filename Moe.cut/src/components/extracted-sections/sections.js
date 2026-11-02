@@ -529,7 +529,8 @@ export function ScrollScaleButton() {
 				return;
 			}
 			const rect = sectionNode.getBoundingClientRect();
-			const scrollDistance = Math.max(1, sectionNode.offsetHeight - innerHeight);
+			const stageHeight = innerWidth <= 700 ? slotNode.parentElement.offsetHeight : innerHeight;
+			const scrollDistance = Math.max(1, sectionNode.offsetHeight - stageHeight);
 			const sectionProgress = clamp(-rect.top / scrollDistance);
 			const reducedMotion = motion.matches;
 			const textIsFinished = getComputedStyle(textStage).visibility === "hidden";
@@ -633,7 +634,9 @@ export function ScrollScaleButton() {
 		children: [/* @__PURE__ */ _jsxs("div", {
 			ref: prompt,
 			className: `extracted-box-prompt${shattered ? " extracted-is-shattering" : ""}${showForm ? " extracted-is-complete" : ""}`,
-			children: [/* @__PURE__ */ _jsx("h2", {
+			children: [/* @__PURE__ */ _jsxs("div", {
+				className: "extracted-box-copy",
+				children: [/* @__PURE__ */ _jsx("h2", {
 				id: "extracted-contact-title",
 				className: "extracted-contact-title",
 				children: "LET’S TALK"
@@ -643,6 +646,7 @@ export function ScrollScaleButton() {
 				"aria-live": "polite",
 				"aria-atomic": true,
 				children: _jsx("span", { children: boxInstructions[damage] }, damage)
+			})]
 			}), /* @__PURE__ */ _jsxs("div", {
 				className: "extracted-scroll-button-layout",
 				children: [/* @__PURE__ */ _jsx("div", {
@@ -777,7 +781,7 @@ export default function EditorialProjects() {
 			const reducedMotion = motion.matches;
 			const mobile = innerWidth <= 700;
 			const rect = node.getBoundingClientRect();
-			const distance = Math.max(1, node.offsetHeight - innerHeight);
+			const distance = Math.max(1, node.offsetHeight - (mobile ? page.offsetHeight : innerHeight));
 			const progress = clamp(-rect.top / distance);
 			// Local pinning compensates for the phone page's overflow container.
 			// Animation progress and timing remain identical to desktop.
