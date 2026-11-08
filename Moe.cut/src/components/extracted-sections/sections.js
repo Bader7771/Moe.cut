@@ -184,7 +184,6 @@ export const transitionEditorialTracks = [
 	]
 ];
 const clamp = (value) => Math.max(0, Math.min(1, value));
-const START_SCALE = .05;
 const TEXT_EXIT_START = .02;
 const TEXT_EXIT_SPAN = .16;
 const BUTTON_REVEAL_START = TEXT_EXIT_START + TEXT_EXIT_SPAN;
@@ -520,28 +519,24 @@ export function ScrollScaleButton() {
 		const motion = matchMedia("(prefers-reduced-motion: reduce)");
 		const updateScale = () => {
 			animationFrame = 0;
-			if (completed.current || engaged.current) {
-				slotNode.style.opacity = "1";
-				slotNode.style.visibility = "visible";
-				promptNode.style.transform = "scale(1)";
-				labelNode.style.opacity = "1";
-				labelNode.style.transform = "translateY(0)";
-				return;
-			}
+			const interactionStarted = completed.current || engaged.current;
 			const rect = sectionNode.getBoundingClientRect();
-			const stageHeight = innerWidth <= 700 ? slotNode.parentElement.offsetHeight : innerHeight;
+			const stageHeight = slotNode.parentElement.offsetHeight;
 			const scrollDistance = Math.max(1, sectionNode.offsetHeight - stageHeight);
 			const sectionProgress = clamp(-rect.top / scrollDistance);
 			const reducedMotion = motion.matches;
-			const textIsFinished = getComputedStyle(textStage).visibility === "hidden";
-			const buttonProgress = textIsFinished ? (reducedMotion ? 1 : clamp((sectionProgress - BUTTON_REVEAL_START) / (1 - BUTTON_REVEAL_START))) : 0;
-			const scale = START_SCALE + (1 - START_SCALE) * buttonProgress;
+			const textIsFinished = !reducedMotion
+				? sectionProgress >= BUTTON_REVEAL_START
+				: getComputedStyle(textStage).visibility === "hidden";
+			const contactIsReady = textIsFinished || completed.current;
+			const buttonProgress = contactIsReady ? (reducedMotion ? 1 : clamp((sectionProgress - BUTTON_REVEAL_START) / (1 - BUTTON_REVEAL_START))) : 0;
 			slotNode.style.opacity = buttonProgress;
 			slotNode.style.visibility = buttonProgress > 0 ? "visible" : "hidden";
+			slotNode.inert = buttonProgress <= 0;
 			slotNode.style.setProperty("--button-reveal", buttonProgress);
-			promptNode.style.transform = `scale(${scale})`;
-			labelNode.style.opacity = clamp(buttonProgress * 1.35);
-			labelNode.style.transform = `translateY(${(1 - buttonProgress) * 8}px)`;
+			promptNode.style.transform = "scale(1)";
+			labelNode.style.opacity = interactionStarted ? 1 : clamp(buttonProgress * 1.35);
+			labelNode.style.transform = "translateY(0)";
 		};
 		const scheduleUpdate = () => {
 			if (!animationFrame) animationFrame = requestAnimationFrame(updateScale);
@@ -556,21 +551,19 @@ export function ScrollScaleButton() {
 			removeEventListener("resize", scheduleUpdate);
 			motion.removeEventListener("change", scheduleUpdate);
 		};
-	}, []);
+	}, [showForm]);
 	useEffect(() => () => clearTimeout(revealTimer.current), []);
 	useEffect(() => {
 		if (!showForm) return undefined;
 		const focusFrame = requestAnimationFrame(() => {
-			if (matchMedia("(max-width: 700px)").matches) slot.current?.scrollTo({ top: 0 });
 			nameInput.current?.focus({ preventScroll: true });
 		});
 		return () => cancelAnimationFrame(focusFrame);
 	}, [showForm]);
 	const handleBreak = () => {
 		if (shattered) return;
-		// Once a phone visitor starts pressing, focus/scroll adjustments must
-		// not shrink or hide the target between hits.
-		engaged.current = matchMedia('(max-width: 700px)').matches;
+		// Keep the target steady between hits; scrolling still controls its fade.
+		engaged.current = true;
 		if (engaged.current) {
 			slot.current.style.opacity = '1';
 			slot.current.style.visibility = 'visible';

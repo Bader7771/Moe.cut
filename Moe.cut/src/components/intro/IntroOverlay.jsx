@@ -92,7 +92,7 @@ export default function IntroOverlay({ onComplete }) {
     transition={{ duration: reduced ? .12 : .75, ease: [.76, 0, .24, 1] }}
     role="dialog"
     aria-modal="true"
-    aria-label="An introduction from Mohamed"
+    aria-label="An introduction from MEO"
     tabIndex={-1}
     data-phase="photos"
   >
@@ -100,8 +100,8 @@ export default function IntroOverlay({ onComplete }) {
       <div className="con-photo-deck" aria-hidden="true">
         {PHOTOS.map(photo => <Polaroid key={photo.src} photo={photo} />)}
       </div>
-      <h2 className="con-greeting" aria-label="Hi, it's me Mohamed">
-        <span aria-hidden="true"><Words>Hi, it's me Mohamed</Words></span>
+      <h2 className="con-greeting" aria-label="Hey, it's me MEO">
+        <span aria-hidden="true"><Words>Hey, it's me Moe.</Words></span>
       </h2>
     </div>
   </motion.section>;

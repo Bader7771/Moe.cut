@@ -16,7 +16,7 @@ export function useWebsiteReveal(content, enabled) {
       const card = host.querySelector(".hero-profile-card");
       if (!header || !card) return;
       const avatar = card.querySelector(".profile-avatar");
-      const status = card.querySelectorAll(".availability-pill, .hero-split-flap");
+      const status = card.querySelectorAll(".availability-pill");
       const heading = card.querySelector("h1");
       const description = card.querySelector(":scope > p");
       const actions = card.querySelector(".hero-actions");
@@ -37,8 +37,8 @@ export function useWebsiteReveal(content, enabled) {
         { autoAlpha: 1, y: 0, scale: 1, duration: .85 }, "identity");
       if (status.length) tl.fromTo(status, { autoAlpha: 0, y: 10 },
         { autoAlpha: 1, y: 0, stagger: .055, duration: .7 }, "identity+=0.08");
-      if (heading) tl.fromTo(heading, { autoAlpha: 0, y: 22, clipPath: "inset(0% 0% 100% 0%)" },
-        { autoAlpha: 1, y: 0, clipPath: "inset(0% 0% 0% 0%)", duration: .85 }, "type");
+      if (heading) tl.fromTo(heading, { autoAlpha: 0, y: 22 },
+        { autoAlpha: 1, y: 0, duration: .85 }, "type");
       if (description) tl.fromTo(description, { autoAlpha: 0, y: 12 },
         { autoAlpha: 1, y: 0, duration: .75 }, "type+=0.12");
       if (actions) tl.set(actions, { autoAlpha: 1, clearProps: "opacity,visibility" }, 0);

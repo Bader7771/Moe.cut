@@ -8,7 +8,8 @@
   flex: 0 0 auto;
   min-width: 0;
   margin-block: auto;
-  padding-block: 12px;
+  width: min(520px, calc(100% - 40px));
+  padding-block: 8px;
 }
 
 .hero-profile-card .profile-avatar {
@@ -19,7 +20,7 @@
 .hero-profile-card .availability-pill {
   max-width: 100%;
   min-height: 36px;
-  margin: 20px 0 0;
+  margin: 18px 0 0;
   padding: 8px 14px;
   gap: 9px;
   color: #323832;
@@ -33,10 +34,16 @@
   animation: none;
 }
 
-.hero-profile-card .hero-split-flap {
+.hero-layer .hero-profile-card .hero-tech-heading {
   flex: none;
-  margin-top: 18px;
-  max-width: 100%;
+  width: min(520px, 100%);
+  max-width: none;
+  height: 1.35em;
+  margin-top: 6px;
+  font-size: clamp(58px, 7.5vw, 112px);
+  line-height: 1;
+  /* Reserve room for selection labels and assembly without changing layout. */
+  text-shadow: none;
 }
 
 .availability-messages {
@@ -58,7 +65,10 @@
 }
 
 .hero-layer .hero-profile-card > p {
-  max-width: 42ch;
+  max-width: 34ch;
+  margin-top: 6px;
+  font-size: clamp(16px, 1.4vw, 21px);
+  line-height: 1.5;
   text-wrap: balance;
 }
 
@@ -67,7 +77,8 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   align-items: stretch;
-  width: min(480px, 100%);
+  width: min(440px, 100%);
+  margin-top: 24px;
   max-width: none;
   gap: 12px;
 }
@@ -173,16 +184,16 @@
     width: 88px;
   }
 
-  .hero-layer .hero-profile-card h1 {
-    margin-top: 20px;
-    font-size: clamp(44px, 10vw, 64px);
+  .hero-layer .hero-profile-card .hero-tech-heading {
+    margin-top: 6px;
+    font-size: clamp(52px, 11.5vw, 76px);
     line-height: 1;
   }
 
   .hero-layer .hero-profile-card > p {
     max-width: 34ch;
-    margin-top: 14px;
-    font-size: 14px;
+    margin-top: 6px;
+    font-size: 16px;
     line-height: 1.6;
   }
 

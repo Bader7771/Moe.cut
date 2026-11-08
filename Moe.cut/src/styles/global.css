@@ -3176,11 +3176,6 @@ main {
     line-height: 1.45;
   }
 
-  .hero-profile-card .split-flap-text {
-    --split-flap-font-size: 14px !important;
-    --split-flap-gap: 2.5px !important;
-    max-width: 100%;
-  }
 
   .hero-actions {
     max-width: 390px;
@@ -3306,10 +3301,6 @@ main {
     width: calc(100% - 24px);
   }
 
-  .hero-profile-card .split-flap-text {
-    --split-flap-font-size: 12.5px !important;
-    --split-flap-gap: 1.75px !important;
-  }
 
   .projects-section .projects-intro,
   .projects-section .project-grid {

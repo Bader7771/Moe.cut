@@ -10,8 +10,8 @@
   align-items: center;
   gap: 24px;
   padding: 32px 20px;
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: visible;
+  transition: opacity 160ms ease-out;
   visibility: hidden;
   opacity: 0;
   pointer-events: none;
@@ -524,9 +524,11 @@
 }
 
 .extracted-editorial-scroll {
+  --contact-runway: 110svh;
   position: relative;
   z-index: 5;
   height: 210svh;
+  overflow-anchor: none;
   background: transparent;
 }
 .extracted-editorial-scroll .extracted-editorial {
@@ -565,6 +567,7 @@
 }
 @media (max-width: 1024px) {
   .extracted-editorial-scroll {
+    --contact-runway: 90svh;
     height: 190svh;
   }
 }
@@ -767,7 +770,8 @@
 @media (max-width: 700px) {
   /* Compress only the phone scroll runway, not the animation sequence. */
   .extracted-editorial-scroll {
-    height: calc(100svh + clamp(160px, 22svh, 220px));
+    --contact-runway: clamp(160px, 22svh, 220px);
+    height: calc(100dvh + var(--contact-runway));
   }
   .extracted-editorial-scroll .extracted-editorial {
     position: relative;
@@ -818,13 +822,37 @@
   box-sizing: border-box;
 }
 
-/* Responsive sizing only: the original box scale, reveal, break interaction,
-   and overlaid form remain driven by the shared animation. */
+/* Once unlocked, the form grows with its fields and uses page scrolling. */
+.extracted-editorial-scroll:has(.is-form-visible) {
+  height: auto;
+  padding-top: var(--contact-runway);
+}
+.extracted-editorial-scroll:has(.is-form-visible) .extracted-editorial {
+  position: relative;
+  height: auto;
+  min-height: 100dvh;
+  overflow: visible;
+  translate: none;
+}
+.extracted-editorial-scroll:has(.is-form-visible) .extracted-editorial-type-stage {
+  display: none;
+}
+.extracted-scroll-button-slot.is-form-visible {
+  position: relative;
+  min-height: 100dvh;
+}
+@media (prefers-reduced-motion: reduce) {
+  .extracted-editorial-scroll:has(.is-form-visible) { padding-top: 0; }
+  .extracted-scroll-button-slot { transition: none; }
+}
+
 @media (max-width: 700px) {
   .extracted-scroll-button-slot {
     gap: 20px;
     padding: max(24px, env(safe-area-inset-top)) 20px max(24px, env(safe-area-inset-bottom));
-    overscroll-behavior: contain;
+  }
+  .extracted-scroll-button-slot.is-form-visible {
+    padding-inline: 4px;
   }
   .extracted-box-prompt {
     width: 100%;
@@ -899,4 +927,6 @@
 @media (max-width: 700px) and (prefers-reduced-motion: reduce) {
   .extracted-editorial-scroll { height: auto; }
   .extracted-editorial-scroll .extracted-editorial { translate: none; }
+  .extracted-editorial-scroll:has(.is-form-visible) { padding-top: 0; }
+  .extracted-scroll-button-slot { transition: none; }
 }

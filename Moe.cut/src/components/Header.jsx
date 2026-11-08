@@ -40,12 +40,12 @@ export default function Header({ whatsapp }) {
     }}>
       <div className="navbar-left">
         <Suspense fallback={<div className="golden-ring-wrapper" />}><GoldenRingCanvas /></Suspense>
-        <a className="navbar-brand" href="#top" onClick={navigate}>Moe.cut</a>
+        <a className="navbar-brand" href="#top" onClick={navigate}></a>
       </div>
 
       <div className="navbar-center" aria-label="MO VIDEO EDITING STUDIO">
         <span aria-hidden="true" />
-        <strong>MO-<br />VIDEO-<br />STUDIO-</strong>
+        <strong>MOE-CUT</strong>
         <span aria-hidden="true" />
       </div>
 

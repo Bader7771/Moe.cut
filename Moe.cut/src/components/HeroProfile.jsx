@@ -1,9 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import profileImage from "../assets/editorial/frame-03.jpg";
 import { useVisibility } from "../performance/useVisibility";
 import CollaboratorImage from "./CollaboratorImage";
 import AvailabilityPill from "./AvailabilityPill";
-import HeroSplitFlap from "./HeroSplitFlap";
+import TechText from "./TechText";
+import { IntroPlaybackContext } from "./intro/IntroPlaybackContext";
 import AnimatedAvailabilityButton from "./AnimatedAvailabilityButton";
 import "./HeroProfile.css";
 import { scrollToSection } from "../utils/scrollToSection";
@@ -36,6 +37,7 @@ function CollaboratorSet({ collaborators, hidden = false }) {
 }
 
 export default function HeroProfile() {
+  const introPlaying = useContext(IntroPlaybackContext);
   const hero = useRef(null);
   const visible = useVisibility(hero);
   const scroller = useRef(null);
@@ -100,8 +102,21 @@ export default function HeroProfile() {
       <div className="hero-profile-card">
         <img className="profile-avatar" src={profileImage} alt="Moe.cut creative director" width="104" height="104" />
         <AvailabilityPill visible={visible} />
-        <HeroSplitFlap />
-        <h1>Moe.cut</h1>
+        <h1 className="hero-tech-heading" aria-label="Moe.cut">
+          <TechText
+            text="Moe.cut"
+            fontSize="inherit"
+            fontWeight={700}
+            letterSpacing={-0.045}
+            intro="assemble"
+            introDuration={1.6}
+            paused={introPlaying}
+            sweep={false}
+            reach={140}
+            specks={10}
+            bounce={0.25}
+          />
+        </h1>
         <p>Creative direction and video editing built to be remembered.</p>
         <div className="hero-actions">
           <a className="hero-button hero-button-secondary" href="#projects" onClick={scrollToSection}>
