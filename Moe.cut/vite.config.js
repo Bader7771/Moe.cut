@@ -8,7 +8,7 @@ const contentSecurityPolicy = [
   "font-src 'self' https://fonts.gstatic.com",
   "img-src 'self' data: blob:",
   "media-src 'self' blob:",
-  "connect-src 'self'",
+  "connect-src 'self' blob:",
   "worker-src 'self' blob:",
   "object-src 'none'",
   "base-uri 'self'",
@@ -33,6 +33,8 @@ export default defineConfig({
     // Three.js is the intentional core of this single-screen experience.
     chunkSizeWarningLimit: 800,
     minify: "oxc",
+    // Preserve standard and prefixed backdrop-filter in optimized CSS.
+    cssTarget: ["chrome111", "edge111", "firefox114", "safari15", "ios15"],
     sourcemap: false,
   },
   preview: {

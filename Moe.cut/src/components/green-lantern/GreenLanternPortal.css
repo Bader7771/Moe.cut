@@ -31,7 +31,7 @@
   color: #e9fff1; font-family: var(--font-mono, monospace);
 }
 .lantern-experience *, .lantern-experience *::before, .lantern-experience *::after { box-sizing: border-box; }
-.lantern-atmosphere { position: absolute; inset: 0; pointer-events: none; opacity: 0; background: radial-gradient(ellipse at 50% 42%, #03281bc9, #020f0bcc 70%); backdrop-filter: blur(14px) saturate(.65); -webkit-backdrop-filter: blur(14px) saturate(.65); }
+.lantern-atmosphere { position: absolute; inset: 0; pointer-events: none; opacity: 0; background: radial-gradient(ellipse at 50% 42%, #03281bc9, #020f0bcc 70%); -webkit-backdrop-filter: blur(14px) saturate(.65); backdrop-filter: blur(14px) saturate(.65); }
 .lantern-source { position: absolute; left: var(--source-x); top: var(--source-y); width: 12px; height: 12px; margin: -6px; border-radius: 50%; pointer-events: none; background: #effff0; box-shadow: 0 0 12px 6px #b0ffc6, 0 0 35px 20px #30ff7d, 0 0 110px 50px #00c66188; }
 .lantern-origin-wave { position: absolute; pointer-events: none; left: var(--source-x); top: var(--source-y); width: 200px; height: 200px; margin: -100px; border-radius: 50%; border: 1px solid #acffb9; background: radial-gradient(circle, #0dff6422 45%, #0dff6455 66%, #c4ffd788 69%, transparent 72%); box-shadow: inset 0 0 20px #5dff9477, 0 0 30px #00ff5544; }
 .lantern-close { position: absolute; z-index: 2; opacity: 0; top: max(20px, env(safe-area-inset-top)); right: 24px; display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 44px; padding: 8px 12px; border: 1px solid #b7ffd12b; border-radius: 30px; color: #d5f7de; background: #08271933; cursor: pointer; font: 9px var(--font-mono, monospace); letter-spacing: .12em; transition: background .2s; }
