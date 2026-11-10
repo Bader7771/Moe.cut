@@ -1,0 +1,11 @@
+Green Lantern Ring
+Author: BatCat — https://sketchfab.com/TheBattyCatty
+Source: https://sketchfab.com/3d-models/green-lantern-ring-5ec23987c5a5487a897fcc1b9201a7be
+License: Creative Commons Attribution 4.0 International (CC BY 4.0)
+https://creativecommons.org/licenses/by/4.0/
+
+The user-supplied green_lantern_ring.glb contains this attribution in its metadata.
+The original mesh geometry and embedded material textures are retained.
+Runtime changes: normalized scale/orientation/pivot, centered camera composition,
+studio lighting, and animation of the model and its authored emissive intensity.
+No endorsement by the original creator is implied.

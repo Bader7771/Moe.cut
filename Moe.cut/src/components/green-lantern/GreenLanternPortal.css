@@ -1,0 +1,83 @@
+.lantern-experience {
+  position: fixed; inset: 0; z-index: 1000000; pointer-events: none; isolation: isolate;
+}
+.lantern-ring-flight {
+  position: fixed; top: 0; left: 0; z-index: 1;
+  width: min(520px, 86vw, 58svh); height: min(480px, 78vw, 54svh);
+  transform-origin: 50% 50%; opacity: 0; will-change: transform, opacity;
+  pointer-events: auto;
+}
+.lantern-dock-target {
+  position: fixed; width: 160px; height: 142px;
+  right: max(20px, env(safe-area-inset-right)); bottom: max(20px, env(safe-area-inset-bottom));
+  pointer-events: none; visibility: hidden;
+}
+.lantern-experience[data-phase="flying"] .lantern-overlay,
+.lantern-experience[data-phase="floating"] .lantern-ring-flight { pointer-events: none; }
+.lantern-experience[data-phase="floating"] .lantern-overlay { visibility: hidden; pointer-events: none; }
+.lantern-experience[data-phase="floating"] .lantern-overlay *::before,
+.lantern-experience[data-phase="floating"] .lantern-overlay *::after,
+.lantern-experience[data-phase="floating"] .lantern-overlay * { animation-play-state: paused; }
+.lantern-experience[data-phase="floating"] .lantern-ring-flight { will-change: auto; }
+@media (max-width: 600px) {
+  .lantern-dock-target { width: 128px; height: 112px; right: max(10px, env(safe-area-inset-right)); bottom: max(12px, env(safe-area-inset-bottom)); }
+}
+@media (max-height: 500px) and (min-width: 600px) {
+  .lantern-ring-flight { height: 32svh; width: 38svh; }
+}
+.lantern-overlay {
+  position: absolute; inset: 0; isolation: isolate; pointer-events: auto;
+  display: grid; place-items: center; overflow: hidden;
+  color: #e9fff1; font-family: var(--font-mono, monospace);
+}
+.lantern-experience *, .lantern-experience *::before, .lantern-experience *::after { box-sizing: border-box; }
+.lantern-atmosphere { position: absolute; inset: 0; pointer-events: none; opacity: 0; background: radial-gradient(ellipse at 50% 42%, #03281bc9, #020f0bcc 70%); backdrop-filter: blur(14px) saturate(.65); -webkit-backdrop-filter: blur(14px) saturate(.65); }
+.lantern-source { position: absolute; left: var(--source-x); top: var(--source-y); width: 12px; height: 12px; margin: -6px; border-radius: 50%; pointer-events: none; background: #effff0; box-shadow: 0 0 12px 6px #b0ffc6, 0 0 35px 20px #30ff7d, 0 0 110px 50px #00c66188; }
+.lantern-origin-wave { position: absolute; pointer-events: none; left: var(--source-x); top: var(--source-y); width: 200px; height: 200px; margin: -100px; border-radius: 50%; border: 1px solid #acffb9; background: radial-gradient(circle, #0dff6422 45%, #0dff6455 66%, #c4ffd788 69%, transparent 72%); box-shadow: inset 0 0 20px #5dff9477, 0 0 30px #00ff5544; }
+.lantern-close { position: absolute; z-index: 2; opacity: 0; top: max(20px, env(safe-area-inset-top)); right: 24px; display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 44px; padding: 8px 12px; border: 1px solid #b7ffd12b; border-radius: 30px; color: #d5f7de; background: #08271933; cursor: pointer; font: 9px var(--font-mono, monospace); letter-spacing: .12em; transition: background .2s; }
+.lantern-close:hover { background: #6aff9a22; }
+.lantern-close:focus-visible { outline: 2px solid #acffcb; outline-offset: 4px; }
+.lantern-stage { position: relative; width: min(760px, 94vw); height: min(760px, 88svh); display: grid; place-items: center; pointer-events: none; }
+.lantern-orbits { position: absolute; width: min(690px, 86vw, 81svh); aspect-ratio: 1; top: 50%; left: 50%; transform: translate(-50%,-50%); pointer-events: none; }
+.lantern-haze { position: absolute; inset: -12%; border-radius: 50%; background: radial-gradient(circle, #1eff7830, #00d85b0b 48%, transparent 67%); }
+.lantern-rays { position: absolute; inset: -5%; border-radius: 50%; background: repeating-conic-gradient(from 15deg, transparent 0deg 28deg, #95ffaf0b 29deg, transparent 33deg 60deg); mask-image: radial-gradient(circle, transparent 15%, #000 40%, transparent 69%); animation: lantern-turn 100s linear infinite; }
+.lantern-orbit { position: absolute; border-radius: 50%; }
+.lantern-orbit-outer { inset: 0; border: 1px solid #a1ffb536; box-shadow: 0 0 16px #22ff7320, inset 0 0 14px #22ff7315; }
+.lantern-orbit-outer::before, .lantern-orbit-outer::after { content: ''; position: absolute; inset: -2px; border: 2px solid transparent; border-top-color: #8bffb5b0; border-bottom-color: #3eff8055; border-radius: 50%; mask-image: conic-gradient(#000 0deg 35deg, transparent 36deg 130deg, #000 131deg 210deg, transparent 211deg); animation: lantern-turn 32s linear infinite; }
+.lantern-orbit-outer::after { inset: 8px; animation-direction: reverse; animation-duration: 45s; opacity: .5; }
+.lantern-orbit-ticks { inset: 3%; background: repeating-conic-gradient(#a8ffca66 0deg .3deg, transparent .4deg 6deg); mask-image: radial-gradient(circle, transparent 69%, #000 69.3% 70.5%, transparent 70.8%); animation: lantern-turn 90s linear infinite; }
+.lantern-orbit-middle { inset: 6.5%; border: 1px dashed #72f99f42; animation: lantern-turn 80s linear infinite reverse; }
+.lantern-orbit-inner { inset: 11%; border: 1px solid #86ffb025; box-shadow: inset 0 0 38px #25ff7014; }
+.lantern-orbit-inner::after { content: ''; position: absolute; inset: 6px; border-radius: 50%; border: 1px solid transparent; border-left-color: #92ffc28c; border-right-color: #92ffc24d; animation: lantern-turn 25s linear infinite; }
+.lantern-particles { position: absolute; inset: 0; animation: lantern-turn 120s linear infinite; }
+.lantern-particles i { position: absolute; top: 50%; left: 50%; width: 2px; height: 2px; border-radius: 50%; background: #a8ffbe; box-shadow: 0 0 7px #4aff91; transform: rotate(var(--angle)) translateX(calc(min(690px, 86vw, 81svh) * .44)); animation: lantern-mote var(--duration) var(--delay) ease-in-out infinite; }
+.lantern-content { position: relative; z-index: 1; width: 100%; display: flex; flex-direction: column; align-items: center; text-align: center; }
+.lantern-artifact-slot { position: relative; width: min(440px, 80vw, 50svh); height: min(400px, 72vw, 45svh); pointer-events: none; }
+.lantern-artifact { width: 100%; height: 100%; position: relative; filter: drop-shadow(0 0 16px #36ff7940); }
+.lantern-artifact[data-model-state="error"] canvas { visibility: hidden; }
+.lantern-artifact canvas { display: block; width: 100%; height: 100%; }
+.lantern-oath { pointer-events: auto; margin: 24px 0 0; font: 400 clamp(16px, 2.15vw, 24px)/1.85 Georgia, 'Times New Roman', serif; letter-spacing: .015em; text-shadow: 0 0 18px #4fff8b45, 0 2px 5px #032011; }
+.lantern-oath span { position: relative; display: block; }
+.lantern-oath span::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(110deg, transparent 30%, #b7ffda30 48%, transparent 65%); background-size: 300% 100%; animation: lantern-inscribe 2s calc(2.1s + var(--line) * .55s) both; }
+.lantern-oath span:last-child { color: #bbffd1; text-shadow: 0 0 20px #63ff9770; }
+@keyframes lantern-turn { to { transform: rotate(360deg); } }
+@keyframes lantern-mote { 0%,100% { opacity: .15; } 50% { opacity: .85; } }
+@keyframes lantern-inscribe { from { background-position: 150% 0; opacity: 0; } 35% { opacity: 1; } to { background-position: -50% 0; opacity: 0; } }
+@media (max-width: 600px) {
+  .lantern-close { right: 12px; top: max(12px, env(safe-area-inset-top)); }
+  .lantern-stage { width: 100%; }
+  .lantern-orbits { width: min(94vw, 75svh); }
+  .lantern-oath { font-size: clamp(13px, 3.6vw, 20px); line-height: 1.95; letter-spacing: 0; }
+  .lantern-particles i:nth-child(2n) { display: none; }
+}
+@media (max-height: 500px) and (min-width: 600px) {
+  .lantern-artifact-slot { height: 32svh; width: 38svh; }
+  .lantern-oath { font-size: 14px; line-height: 1.55; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lantern-experience *, .lantern-experience *::after, .lantern-experience *::before { animation: none !important; transition: none !important; }
+}
+
+.lantern-model-status { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display: grid; justify-items: center; gap: 12px; width: 90%; color: #c4e8d3; font: 11px/1.5 var(--font-mono, monospace); text-align: center; }
+.lantern-model-status button { padding: 8px 12px; border: 1px solid #a6edc060; border-radius: 20px; background: #08271b; color: #e2ffed; font: inherit; cursor: pointer; }
+.lantern-model-status button:focus-visible { outline: 2px solid #acffcb; outline-offset: 3px; }

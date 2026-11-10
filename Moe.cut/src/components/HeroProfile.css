@@ -225,3 +225,31 @@
     transform: none;
   }
 }
+
+/* Keep the original 8px indicator, with a forgiving touch/keyboard hit area. */
+.hero-profile-card button.availability-dot {
+  position: relative;
+  display: block;
+  padding: 0;
+  border: 0;
+  cursor: pointer;
+  transition: box-shadow 200ms ease, background 200ms ease;
+}
+.hero-profile-card button.availability-dot::before {
+  content: '';
+  position: absolute;
+  inset: -18px -12px;
+  border-radius: 50%;
+}
+.hero-profile-card button.availability-dot:hover,
+.hero-profile-card button.availability-dot[data-charging="true"] {
+  background: #b0ffcb;
+  box-shadow: 0 0 0 4px #28ef6e33, 0 0 16px 5px #24ff7388, 0 0 36px #18d95c66;
+}
+.hero-profile-card button.availability-dot:focus-visible {
+  outline: 2px solid #108c3d;
+  outline-offset: 7px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-profile-card button.availability-dot { transition: none; }
+}
